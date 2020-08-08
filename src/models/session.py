@@ -5,17 +5,16 @@ import json
 from datetime import datetime
 
 class Session:
-    session_id: str
+    sid: str
     username: str
     expiry: int
     next_validation:datetime
     seq_num: int
     etag: str = "*"
 
-    def __init__(self, session_id: str, username: str, domain: str, expiry: int, next_validation: datetime, seq_num: int, etag: str = "*"):
-        self.session_id = session_id
+    def __init__(self, sid: str, username: str, expiry: int, next_validation: datetime, seq_num: int, etag: str = "*"):
+        self.sid = sid
         self.username = username
-        self.domain = domain
         self.expiry = expiry
         self.next_validation = next_validation
         self.seq_num = seq_num

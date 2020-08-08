@@ -20,7 +20,7 @@ logger.setLevel(logging.ERROR)
 api.add_resource(GoogleSignInController, '/googlesignin', "/googlesignin/", endpoint="googlesignin")
 
 google_oauth = GoogleOauth(DictCache())
-session_handler = SessionHandler(logger, DictCache(), CertificateFromKeyvault(config.common.SigningCertificateUri, timedelta(hours=1), ))
+session_handler = SessionHandler(logger, DictCache(), CertificateFromKeyvault(config.common.SigningCertificateUri, timedelta(hours=1), config.common.KeyVaultAuthTokenUri))
 api.add_resource(GoogleSignInController, '/googlesignin/<type>', endpoint="googlesignin/type", resource_class_args=(logger, google_oauth, session_handler,))
 
 if __name__ == '__main__':
