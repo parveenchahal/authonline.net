@@ -31,9 +31,12 @@ class GoogleSignInController(Controller):
         self.__validate_auth_request(args)
         code = args.get("code", None)
         scopes = args.get("scope", None)
+        resource = args.get("state", None)
         tokens = self.__google_oauth.get_token_authorization_code(code, scopes, config.RedirectUri)
-        id_token = tokens['id_token']
-
+        username = tokens['username']
+        session = self.__session_handler.create(username, resource, config.common.SessionExpiry)
+        signed_session = self.__session_handler.sign(session)
+        return signed_session, 200
         
 
     def get(self, type: str = ""):
@@ -42,7 +45,11 @@ class GoogleSignInController(Controller):
             if "auth".__eq__(type):
                 return self.__auth(args)
             elif "".__eq__(type) or "/".__eq__(type):
-                return redirect(config.LoginUrl, code=302)
+                login_url = config.LoginUrl
+                resource = args.get("resource", None)
+                if resource is not None:
+                    login_url = f'{login_url}&state={resource}'
+                return redirect(login_url, code=302)
             else:
                 return NotFound()
         except exceptions.LoginFailure as e:

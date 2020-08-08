@@ -1,3 +1,4 @@
+from base64 import b64encode
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 import copy
@@ -7,14 +8,16 @@ from datetime import datetime
 class Session:
     sid: str
     username: str
+    resource: str
     expiry: int
-    next_validation:datetime
+    next_validation: int
     seq_num: int
     etag: str = "*"
 
-    def __init__(self, sid: str, username: str, expiry: int, next_validation: datetime, seq_num: int, etag: str = "*"):
+    def __init__(self, sid: str, username: str, resource: str, expiry: int, next_validation: int, seq_num: int, etag: str = "*"):
         self.sid = sid
         self.username = username
+        self.resource = resource
         self.expiry = expiry
         self.next_validation = next_validation
         self.seq_num = seq_num

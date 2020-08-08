@@ -31,8 +31,9 @@ class CertificateFromKeyvault(Certificate):
         if self.__update_required(now):
             with self.__lock:
                 if self.__update_required(now):
-                    accessToken = http_get(self.__auth_uri)
-                    res = request("GET", self.__secret_uri, headers={"Authorization": accessToken})
-                    self.__cached_secret = json.loads(res)
+                    res = http_get(self.__auth_uri)
+                    access_token = json.loads(res.text)["access_token"]
+                    res = request("GET", self.__secret_uri, headers={"Authorization": f'Bearer {access_token}'})
+                    self.__cached_secret = json.loads(json.loads(res.text)['value'])
                     self.__last_read = now
         return copy.deepcopy(self.__cached_secret)

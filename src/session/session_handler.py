@@ -7,6 +7,7 @@ from crypto import Certificate
 import base64
 import hashlib
 from Crypto.Cipher import PKCS1_OAEP
+from Crypto.PublicKey import RSA
 
 class SessionHandler():
 
@@ -26,16 +27,17 @@ class SessionHandler():
         key = str(uuid.uuid5(uuid.NAMESPACE_OID, key))
         return key
 
-    def create(self, username: str, expiry: timedelta) -> Session:
+    def create(self, username: str, resource:str, expiry: timedelta) -> Session:
         now_utc = datetime.utcnow()
         exp = int(datetime.timestamp(now_utc + expiry))
 
         sid = str(uuid.uuid5(uuid.NAMESPACE_OID, f"{id} + {str(exp)}"))
-        next_validation = now_utc + self.__next_validation
+        next_validation = int(datetime.timestamp(now_utc + self.__next_validation))
 
         session = Session(
             sid=sid,
             username=username,
+            resource=resource,
             expiry=exp,
             next_validation=next_validation,
             seq_num=1
@@ -43,7 +45,7 @@ class SessionHandler():
         
         key = self.__generate_key(session.username, session.sid)
         data = self.__storage.add_or_update(key, session)
-        return Session(**data)
+        return session
 
     def get(self, username: str, session_id: str, seq_no: int) -> Session:
         key = self.__generate_key(username, session_id)
@@ -53,13 +55,14 @@ class SessionHandler():
     def __get_sig(self, data: str) -> str:
         h = hashlib.sha256(data.encode('UTF-8', errors='strict')).hexdigest()
         key = self.__certificate.get()[0]['key']
-        encryptor = PKCS1_OAEP.new(key)
-        enc = encryptor.encrypt(h)
+        key = base64.b64decode(key.encode('UTF-8', errors='strict')).decode('UTF-8', errors='strict')
+        encryptor = PKCS1_OAEP.new(RSA.importKey(key))
+        enc = encryptor.encrypt(h.encode('UTF-8', errors='strict'))
         return base64.b64encode(enc)
 
     def sign(self, session: Session) -> str:
         s = session.to_json_string()
-        s = session.encode('UTF-8', errors='strict')
+        s = s.encode('UTF-8', errors='strict')
         s = base64.b64encode(s)
         base64_encoded = s.decode('UTF-8', errors='strict')
         sig = self.__get_sig(base64_encoded)
