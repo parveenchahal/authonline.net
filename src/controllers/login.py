@@ -33,7 +33,7 @@ class Login(Controller):
             resource = args.get("resource", None)
             if resource is None:
                 resource = config.common.BaseUrl
-            file_path = os.path.join(os.getcwd(), "src/statics/login.html")
+            file_path = os.path.join(os.getcwd(), "statics/login.html")
             with open(file_path, 'r') as f:
                 data = f.read()
                 data = self.__update_page_with_values(data, args)

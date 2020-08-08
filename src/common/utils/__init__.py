@@ -8,18 +8,24 @@ def bytes_to_string(b: bytes) -> str:
 def string_to_bytes(s: str) -> bytes:
     return s.encode('UTF-8', errors='strict')
 
-def encode_base64(data) -> str:
+def encode_base64(data, altchars: bytes = None, remove_padding: bool = False) -> str:
     if isinstance(data, bytes):
-        return bytes_to_string(b64encode(data))
+        b64e = b64encode(data, altchars=altchars)
+        if remove_padding:
+            b64e = b64e.rstrip(b'=')
+        return bytes_to_string(b64e)
     if isinstance(data, str):
-        return bytes_to_string(b64encode(string_to_bytes(data)))
+        b64e = b64encode(string_to_bytes(data), altchars=altchars)
+        if remove_padding:
+            b64e = b64e.rstrip(b'=')
+        return bytes_to_string(b64e)
     raise ValueError("Format is not supported")
 
-def decode_base64(data) -> str:
+def decode_base64(data, altchars: bytes=None) -> str:
     if isinstance(data, bytes):
-        return bytes_to_string(b64decode(data))
+        return bytes_to_string(b64decode(data, altchars=altchars))
     if isinstance(data, str):
-        return bytes_to_string(b64decode(string_to_bytes(data)))
+        return bytes_to_string(b64decode(string_to_bytes(data), altchars=altchars))
     raise ValueError("Format is not supported")
 
 def parse_json(json_string: str):

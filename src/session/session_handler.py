@@ -52,9 +52,9 @@ class SessionHandler():
 
     def sign(self, session: Session) -> str:
         s = session.to_json_string()
-        e_s = encode_base64(s)
-        sig = self.__rsa_signature.get_signature(e_s)
-        return f'{e_s}.{sig}'
+        e_s = encode_base64(s, remove_padding=True)
+        header, sig = self.__rsa_signature.get_signature(e_s)
+        return f'{header}.{e_s}.{sig}'
 
 
 
