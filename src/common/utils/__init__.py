@@ -8,14 +8,14 @@ def bytes_to_string(b: bytes) -> str:
 def string_to_bytes(s: str) -> bytes:
     return s.encode('UTF-8', errors='strict')
 
-def encode_base64(data: [bytes, str]) -> str:
+def encode_base64(data) -> str:
     if isinstance(data, bytes):
         return bytes_to_string(b64encode(data))
     if isinstance(data, str):
         return bytes_to_string(b64encode(string_to_bytes(data)))
     raise ValueError("Format is not supported")
 
-def decode_base64(data: [bytes, str]) -> str:
+def decode_base64(data) -> str:
     if isinstance(data, bytes):
         return bytes_to_string(b64decode(data))
     if isinstance(data, str):
