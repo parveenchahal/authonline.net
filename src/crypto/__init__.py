@@ -1,2 +1,3 @@
-from crypto.certificate import Certificate
+from crypto.rsa_signature import RSASignature
+from crypto.certificate_handler import CertificateHandler
 from crypto.certificate_from_keyvault import CertificateFromKeyvault

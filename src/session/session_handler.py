@@ -1,26 +1,24 @@
 from logging import Logger
 import uuid
 from datetime import datetime, timedelta
-from models import Session
+from session.models import Session
 from storage.storage import Storage
-from crypto import Certificate
-import base64
-import hashlib
-from Crypto.Cipher import PKCS1_OAEP
-from Crypto.PublicKey import RSA
+from crypto import RSASignature
+from common.utils import encode_base64
+
 
 class SessionHandler():
 
     __logger: Logger
     __storage: Storage
     __next_validation: timedelta
-    __certificate: Certificate
+    __rsa_signature: RSASignature
 
-    def __init__(self, logger: Logger, storage: Storage, certificate: Certificate):
+    def __init__(self, logger: Logger, storage: Storage, rsa_signature: RSASignature):
         self.__logger = logger
         self.__storage = storage
         self.__next_validation = timedelta(minutes=1)
-        self.__certificate = certificate
+        self.__rsa_signature = rsa_signature
 
     def __generate_key(self, username: str, sid: str) -> str:
         key = f"{username}-{sid}"
@@ -44,29 +42,19 @@ class SessionHandler():
         )
         
         key = self.__generate_key(session.username, session.sid)
-        data = self.__storage.add_or_update(key, session)
-        return session
+        data = self.__storage.add_or_update(key, session.to_dict())
+        return Session(**data)
 
     def get(self, username: str, session_id: str, seq_no: int) -> Session:
         key = self.__generate_key(username, session_id)
         data = self.__storage.get(key)
         return Session(**data)
 
-    def __get_sig(self, data: str) -> str:
-        h = hashlib.sha256(data.encode('UTF-8', errors='strict')).hexdigest()
-        key = self.__certificate.get()[0]['key']
-        key = base64.b64decode(key.encode('UTF-8', errors='strict')).decode('UTF-8', errors='strict')
-        encryptor = PKCS1_OAEP.new(RSA.importKey(key))
-        enc = encryptor.encrypt(h.encode('UTF-8', errors='strict'))
-        return base64.b64encode(enc)
-
     def sign(self, session: Session) -> str:
         s = session.to_json_string()
-        s = s.encode('UTF-8', errors='strict')
-        s = base64.b64encode(s)
-        base64_encoded = s.decode('UTF-8', errors='strict')
-        sig = self.__get_sig(base64_encoded)
-        return f'{base64_encoded}.{sig}'
+        e_s = encode_base64(s)
+        sig = self.__rsa_signature.get_signature(e_s)
+        return f'{e_s}.{sig}'
 
 
 

@@ -3,7 +3,9 @@
 <body>
 
 <form method="GET" action="/googlesignin">
-    <input type="hidden" name="resource" value="?" />
+    <input type="hidden" name="resource" value="$resource$" />
+    <input type="hidden" name="redirect_uri" value="$redirect_uri$" />
+    <input type="hidden" name="state" value="$state$" />
     <input type="submit" value="Google Signin" />
 </form>
  

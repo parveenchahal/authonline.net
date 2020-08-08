@@ -7,7 +7,8 @@ from google_oauth import GoogleOauth
 from error_responses import Unauthorized, BadRequest, NotFound, InternalServerError
 import exceptions
 from session import SessionHandler
-
+from urllib.parse import urlparse, ParseResult
+from common.utils import parse_json, to_json_string
 
 class GoogleSignInController(Controller):
 
@@ -26,17 +27,25 @@ class GoogleSignInController(Controller):
         scopes = args.get("scope", None)
         if scopes is None:
             raise exceptions.MissingParam("scopes is missing")
+        state = args.get("state", None)
+        if state is None:
+            raise exceptions.MissingParam("state is missing")
 
     def __auth(self, args: dict):
         self.__validate_auth_request(args)
-        code = args.get("code", None)
-        scopes = args.get("scope", None)
-        resource = args.get("state", None)
+        code = args.get("code")
+        scopes = args.get("scope")
+        state = parse_json(args.get("state"))
+
+        resource = state.get('resource')
+        redirect_uri = state.get('redirect_uri')
+        user_state_param = state.get('state')
+
         tokens = self.__google_oauth.get_token_authorization_code(code, scopes, config.RedirectUri)
         username = tokens['username']
         session = self.__session_handler.create(username, resource, config.common.SessionExpiry)
         signed_session = self.__session_handler.sign(session)
-        return signed_session, 200
+        return redirect(f'{redirect_uri}?state={user_state_param}&session={signed_session}', code=302)
         
 
     def get(self, type: str = ""):
@@ -46,9 +55,7 @@ class GoogleSignInController(Controller):
                 return self.__auth(args)
             elif "".__eq__(type) or "/".__eq__(type):
                 login_url = config.LoginUrl
-                resource = args.get("resource", None)
-                if resource is not None:
-                    login_url = f'{login_url}&state={resource}'
+                login_url = f'{login_url}&state={to_json_string(args)}'
                 return redirect(login_url, code=302)
             else:
                 return NotFound()

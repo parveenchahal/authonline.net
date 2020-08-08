@@ -10,8 +10,9 @@ class DictCache(Storage):
     def get(self, key: str):
         return self.__dict.get(key, None)
 
-    def add_or_update(self, key: str, data: dict):
+    def add_or_update(self, key: str, data):
         self.__dict[key] = data
+        return self.get(key)
     
     def delete(self, key: str):
         self.__dict.pop(key, None)

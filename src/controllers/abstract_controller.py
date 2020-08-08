@@ -1,5 +1,4 @@
-from flask_restful import Resource, reqparse, request, output_json
-from flask import jsonify
+from flask_restful import Resource
 from logging import Logger
 
 

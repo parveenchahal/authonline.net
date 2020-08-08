@@ -6,7 +6,7 @@ from controllers import GoogleSignInController, Login
 from google_oauth import GoogleOauth
 from storage import DictCache
 from session import SessionHandler
-from crypto import CertificateFromKeyvault
+from crypto import CertificateFromKeyvault, RSASignature
 from datetime import timedelta
 
 
@@ -22,7 +22,9 @@ logger = logging.getLogger('werkzeug')
 api.add_resource(Login, '/login', endpoint="login", resource_class_args=(logger,))
 
 google_oauth = GoogleOauth()
-session_handler = SessionHandler(logger, DictCache(), CertificateFromKeyvault(config.common.SigningCertificateUri, timedelta(hours=1), config.common.KeyVaultAuthTokenUri))
+certificate_handler = CertificateFromKeyvault(config.common.SigningCertificateUri, timedelta(hours=1), config.common.KeyVaultAuthTokenUri)
+rsa_signature = RSASignature(certificate_handler)
+session_handler = SessionHandler(logger, DictCache(), rsa_signature)
 
 api.add_resource(GoogleSignInController, '/googlesignin', endpoint="googlesignin", resource_class_args=(logger, google_oauth, session_handler,))
 api.add_resource(GoogleSignInController, '/googlesignin/<type>', endpoint="googlesignin/type", resource_class_args=(logger, google_oauth, session_handler,))

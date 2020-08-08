@@ -1,16 +1,17 @@
-from crypto.certificate import Certificate
+from crypto.certificate_handler import CertificateHandler
 from requests import get as http_get, request
 from datetime import datetime, timedelta
 from typing import List
-import json
 import copy
 from threading import RLock
+from crypto.models.certificate import Certificate
+from common.utils import parse_json, to_json_string
 
 
-class CertificateFromKeyvault(Certificate):
+class CertificateFromKeyvault(CertificateHandler):
 
     __secret_uri: str
-    __cached_secret: List[dict]
+    __cached_secret: List[Certificate]
     __last_read: datetime
     __auth_uri: str
     __expires_in: timedelta
@@ -26,14 +27,17 @@ class CertificateFromKeyvault(Certificate):
     def __update_required(self, now):
         return self.__cached_secret is None or self.__last_read is None or now >= self.__last_read
 
-    def get(self) -> List[dict]:
+    def get(self) -> List[Certificate]:
         now = datetime.utcnow()
         if self.__update_required(now):
             with self.__lock:
                 if self.__update_required(now):
                     res = http_get(self.__auth_uri)
-                    access_token = json.loads(res.text)["access_token"]
+                    access_token = parse_json(res.text)["access_token"]
                     res = request("GET", self.__secret_uri, headers={"Authorization": f'Bearer {access_token}'})
-                    self.__cached_secret = json.loads(json.loads(res.text)['value'])
+                    value = parse_json(res.text)['value']
+                    cert_list = parse_json(value)
+                    cert_list = [Certificate.from_json_string(Certificate, to_json_string(x)) for x in cert_list]
+                    self.__cached_secret = cert_list
                     self.__last_read = now
         return copy.deepcopy(self.__cached_secret)
