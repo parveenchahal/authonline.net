@@ -1,5 +1,8 @@
+from cachetools import TTLCache, Cache
 from storage.storage import Storage
 class DictCache(Storage):
+
+    __dict: dict
 
     def __init__(self):
         self.__dict = {}

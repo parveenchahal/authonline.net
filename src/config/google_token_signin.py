@@ -10,4 +10,4 @@ def init():
     global LoginUrl, RedirectUri
 
     RedirectUri = urllib.parse.urljoin(common.BaseUrl, "googlesignin/auth")
-    LoginUrl = f"https://accounts.google.com/signin/oauth/identifier?redirect_uri={RedirectUri}&response_type=code&client_id={ClientId}&scope=email%20profile&access_type=offline&prompt=consent%20select_account"
+    LoginUrl = f"https://accounts.google.com/signin/oauth/identifier?redirect_uri={RedirectUri}&response_type=code&client_id={ClientId}&scope=email%20profile&access_type=offline&prompt=select_account"
