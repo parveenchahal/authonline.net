@@ -25,7 +25,7 @@ class SessionHandler():
         key = str(uuid.uuid5(uuid.NAMESPACE_OID, key))
         return key
 
-    def create(self, username: str, resource:str, expiry: timedelta) -> Session:
+    def create(self, username: str, amr: list, resource:str, expiry: timedelta) -> Session:
         now_utc = datetime.utcnow()
         exp = int(datetime.timestamp(now_utc + expiry))
 
@@ -34,6 +34,7 @@ class SessionHandler():
 
         session = Session(
             sid=sid,
+            amr=amr,
             username=username,
             resource=resource,
             expiry=exp,

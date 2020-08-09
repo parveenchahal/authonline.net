@@ -9,6 +9,7 @@ from dataclasses import dataclass
 @dataclass
 class Session(Model):
     sid: str
+    amr: list
     username: str
     resource: str
     expiry: int

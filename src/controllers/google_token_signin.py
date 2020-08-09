@@ -41,9 +41,9 @@ class GoogleSignInController(Controller):
         redirect_uri = state.get('redirect_uri')
         user_state_param = state.get('state')
 
-        tokens = self.__google_oauth.get_token_authorization_code(code, scopes, config.RedirectUri)
-        username = tokens['username']
-        session = self.__session_handler.create(username, resource, config.common.SessionExpiry)
+        credentials = self.__google_oauth.get_token_authorization_code(code, scopes, config.RedirectUri)
+        username = credentials['username']
+        session = self.__session_handler.create(username, ["Google login",], resource, config.common.SessionExpiry)
         signed_session = self.__session_handler.sign(session)
         return redirect(f'{redirect_uri}?state={user_state_param}&session={signed_session}', code=302)
         

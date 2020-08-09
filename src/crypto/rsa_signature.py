@@ -17,6 +17,6 @@ class RSASignature(object):
         h = SHA256.new(string_to_bytes(data))
         sig = signer.sign(h)
         header =  encode_base64(to_json_string({
-            "alg": "SHA256"
+            "alg": "RS256"
         }), remove_padding=True)
         return header, encode_base64(sig, remove_padding=True)
