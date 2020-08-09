@@ -1,5 +1,6 @@
 import uuid
 from jwt import JWT
+from jwt.jwk import RSAJWK, RSAPrivateKey, load_pem_private_key, default_backend
 from datetime import datetime, timedelta
 from crypto import CertificateHandler
 from crypto.models import Certificate
@@ -18,7 +19,7 @@ class JWTTokenHandler(object):
         self.__certificate_handler = certificate_handler
         self.__jwt = JWT()
 
-    def get(self, payload: dict, expiry: timedelta = timedelta(hours=1)) -> str:
+    def get(self, payload: dict, expiry: timedelta = timedelta(hours=1)) -> dict:
         payload = dict(payload, **self.__default_payload)
         now_utc = datetime.utcnow()
         exp = int(datetime.timestamp(now_utc + expiry))
@@ -28,5 +29,8 @@ class JWTTokenHandler(object):
         payload['exp'] = exp
         payload['jti'] = str(uuid.uuid5(uuid.NAMESPACE_OID, f"{payload['sub']} + {str(exp)}"))
         cert: Certificate = self.__certificate_handler.get()[0]
-        key = cert.private_key
-        return bytes_to_string(__jwt.encode(payload, key, algorithm=self.__alg))
+        key = load_pem_private_key(cert.private_key, password=None, backend=default_backend())
+        access_token = self.__jwt.encode(payload, RSAJWK(key), alg=self.__alg)
+        return {
+            'access_token': access_token
+        }

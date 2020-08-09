@@ -30,4 +30,5 @@ class AuthOnlineToken(Controller):
         remote_addr = request.remote_addr
         cookie: str = request.cookies.get("session")
         session = Session.from_json_string(Session, decode_base64(cookie.split('.')[1]))
-        self.__jwt_token_handler.get(self.__generate_payload_using_session(session, remote_addr))
+        credentials = self.__jwt_token_handler.get(self.__generate_payload_using_session(session, remote_addr))
+        return credentials, 200

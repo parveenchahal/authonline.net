@@ -53,11 +53,9 @@ class SessionHandler():
 
     def sign(self, session: Session) -> str:
         s = session.to_json_string()
-        e_s = encode_base64(s, remove_padding=True)
+        e_s = encode_base64(s)
         header, sig = self.__rsa_signature.get_signature(e_s)
         return f'{header}.{e_s}.{sig}'
-
-
 
     def delete(self, username: str, session_id: str) -> bool:
         key = self.__generate_key(username, session_id)
