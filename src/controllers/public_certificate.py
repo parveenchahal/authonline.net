@@ -13,7 +13,7 @@ class PublicCertificate(Controller):
 
     def get(self):
         try:
-            cert_list = self.__certificate_handler.get()
+            cert_list, _ = self.__certificate_handler.get()
             return [encode_base64(x.certificate) for x in cert_list], 200
         except Exception as e:
             self._logger.exception(e)
