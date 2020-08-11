@@ -5,9 +5,9 @@ from dataclasses import dataclass
 class AccessTokenPayloadModel(Model):
     aud: str = None
     iss: str = None
-    iat: str = None
-    nbf: str = None
-    exp: str = None
+    iat: int = None
+    nbf: int = None
+    exp: int = None
     jti: str = None
     sub: str = None
     scp: str = None

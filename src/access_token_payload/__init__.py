@@ -14,12 +14,13 @@ def generate_access_token_payload_using_session(session: Session, remote_addr: s
     access_token.amr = session.amr
     access_token.remote_addr = remote_addr
 
-    now_utc = datetime.utcnow()
-    access_token.iat = int(now_utc.timestamp())
-    access_token.nbf = int(now_utc.timestamp())
-    e = now_utc + expiry
-    access_token.exp = e.timestamp()
+    now_utc = int(datetime.utcnow().timestamp())
+    exp = now_utc + int(expiry.total_seconds())
 
-    access_token.jti = str(uuid.uuid5(uuid.NAMESPACE_OID, f"{session.sid} + {str(e)}"))
+    access_token.iat = now_utc
+    access_token.nbf = now_utc
+    access_token.exp = exp
+
+    access_token.jti = str(uuid.uuid5(uuid.NAMESPACE_OID, f"{session.sid} + {str(exp)}"))
 
     return access_token
