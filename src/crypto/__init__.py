@@ -1,4 +1,5 @@
-from crypto.rsa_signature import RSASignature
 from crypto.certificate_handler import CertificateHandler
 from crypto.certificate_from_keyvault import CertificateFromKeyvault
-from crypto.jwt_token_handler import JWTTokenHandler
+from crypto.jwt.jwt_token_handler import JWTTokenHandler
+from crypto.jwt.rsa_key_handler import RSAKeyHandler
+from crypto.jwt.signing_key_handler import SigningKeyHandler

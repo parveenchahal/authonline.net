@@ -27,8 +27,9 @@ class CertificateFromKeyvault(CertificateHandler):
     def __update_required(self, now):
         return self.__cached_secret is None or self.__last_read is None or now >= self.__last_read
 
-    def get(self) -> List[Certificate]:
+    def get(self) -> (List[Certificate], bool):
         now = datetime.utcnow()
+        updated = False
         if self.__update_required(now):
             with self.__lock:
                 if self.__update_required(now):
@@ -40,4 +41,5 @@ class CertificateFromKeyvault(CertificateHandler):
                     cert_list = [Certificate.from_json_string(Certificate, to_json_string(x)) for x in cert_list]
                     self.__cached_secret = cert_list
                     self.__last_read = now
-        return copy.deepcopy(self.__cached_secret)
+                    updated = True
+        return copy.deepcopy(self.__cached_secret), updated

@@ -3,8 +3,7 @@ import uuid
 from datetime import datetime, timedelta
 from session.models import Session
 from storage.storage import Storage
-from crypto import RSASignature
-from common.utils import encode_base64
+from crypto.jwt.jwt_token_handler import JWTTokenHandler
 
 
 class SessionHandler():
@@ -12,13 +11,13 @@ class SessionHandler():
     __logger: Logger
     __storage: Storage
     __next_validation: timedelta
-    __rsa_signature: RSASignature
+    __jwt_token_handler: JWTTokenHandler
 
-    def __init__(self, logger: Logger, storage: Storage, rsa_signature: RSASignature):
+    def __init__(self, logger: Logger, storage: Storage, jwt_token_handler: JWTTokenHandler):
         self.__logger = logger
         self.__storage = storage
         self.__next_validation = timedelta(minutes=1)
-        self.__rsa_signature = rsa_signature
+        self.__jwt_token_handler = jwt_token_handler
 
     def __generate_key(self, username: str, sid: str) -> str:
         key = f"{username}-{sid}"
@@ -52,10 +51,8 @@ class SessionHandler():
         return Session(**data)
 
     def sign(self, session: Session) -> str:
-        s = session.to_json_string()
-        e_s = encode_base64(s)
-        header, sig = self.__rsa_signature.get_signature(e_s)
-        return f'{header}.{e_s}.{sig}'
+        signed_session = self.__jwt_token_handler.sign(session.to_dict())
+        return signed_session
 
     def delete(self, username: str, session_id: str) -> bool:
         key = self.__generate_key(username, session_id)

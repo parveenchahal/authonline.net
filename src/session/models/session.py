@@ -18,7 +18,7 @@ class Session(Model):
     etag: str = "*"
     
     def to_dict(self) -> dict:
-        d = copy.deepcopy(self.__dict__)
+        d = super().to_dict(True)
         d.pop("etag", None)
         return d
 

@@ -3,6 +3,7 @@ from typing import List
 from crypto.models.certificate import Certificate
 
 class CertificateHandler(object):
+    
     @abstractmethod
-    def get(self) -> List[Certificate]:
+    def get(self) -> (List[Certificate], bool):
         raise NotImplementedError()

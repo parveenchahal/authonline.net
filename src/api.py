@@ -6,7 +6,7 @@ from controllers import GoogleSignInController, Login, PublicCertificate, AuthOn
 from google_oauth import GoogleOauth
 from storage import DictCache
 from session import SessionHandler
-from crypto import CertificateFromKeyvault, RSASignature
+from crypto import CertificateFromKeyvault, RSAKeyHandler
 from datetime import timedelta
 from crypto import JWTTokenHandler
 
@@ -23,9 +23,9 @@ api.add_resource(Login, '/login', endpoint="login", resource_class_args=(logger,
 
 google_oauth = GoogleOauth()
 certificate_handler = CertificateFromKeyvault(config.common.SigningCertificateUri, timedelta(hours=1), config.common.KeyVaultAuthTokenUri)
-rsa_signature = RSASignature(certificate_handler)
-session_handler = SessionHandler(logger, DictCache(), rsa_signature)
-
+rsa_key_handler = RSAKeyHandler(certificate_handler)
+jwt_token_handler = JWTTokenHandler(rsa_key_handler)
+session_handler = SessionHandler(logger, DictCache(), jwt_token_handler)
 api.add_resource(GoogleSignInController, '/googlesignin', endpoint="googlesignin", resource_class_args=(logger, google_oauth, session_handler,))
 api.add_resource(GoogleSignInController, '/googlesignin/<type>', endpoint="googlesignin/type", resource_class_args=(logger, google_oauth, session_handler,))
 
@@ -33,7 +33,8 @@ certificate_handler = CertificateFromKeyvault(config.common.SigningCertificateUr
 api.add_resource(PublicCertificate, '/public_certificate', endpoint="public_certificate", resource_class_args=(logger, certificate_handler,))
 
 certificate_handler = CertificateFromKeyvault(config.common.SigningCertificateUri, timedelta(hours=1), config.common.KeyVaultAuthTokenUri)
-jwt_token_handler = JWTTokenHandler(certificate_handler)
+rsa_key_handler = RSAKeyHandler(certificate_handler)
+jwt_token_handler = JWTTokenHandler(rsa_key_handler)
 api.add_resource(AuthOnlineToken, '/oauth2/token', endpoint="authonline_token", resource_class_args=(logger, jwt_token_handler,))
 
 if __name__ == '__main__':
