@@ -11,7 +11,7 @@ class AccessTokenPayloadModel(Model):
     jti: str = None
     sub: str = None
     scp: str = None
-    username: str = None
+    usr: str = None
     amr: list = None
     remote_addr: str = None
 

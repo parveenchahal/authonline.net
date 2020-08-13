@@ -10,11 +10,11 @@ from dataclasses import dataclass
 class Session(Model):
     sid: str
     amr: list
-    username: str
-    resource: str
-    expiry: int
-    next_validation: int
-    seq_num: int
+    usr: str
+    res: str
+    exp: int
+    raf: int
+    sqn: int
     etag: str = "*"
     
     def to_dict(self) -> dict:
@@ -25,4 +25,4 @@ class Session(Model):
     @property
     def is_valid(self) -> bool:
         now = int(datetime.timestamp(datetime.utcnow()))
-        return now < self.expiry
+        return now < self.exp

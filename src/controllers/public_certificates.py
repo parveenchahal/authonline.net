@@ -3,7 +3,7 @@ from crypto.certificate_handler import CertificateHandler
 from common.utils import encode_base64
 from error_responses import InternalServerError
 
-class PublicCertificate(Controller):
+class PublicCertificates(Controller):
 
     __certificate_handler: CertificateHandler
 

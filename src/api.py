@@ -2,7 +2,7 @@ import logging
 from flask import Flask
 from flask_restful import Api
 import config
-from controllers import GoogleSignInController, Login, PublicCertificate, AuthOnlineToken
+from controllers import GoogleSignInController, Login, PublicCertificates, AuthOnlineToken
 from google_oauth import GoogleOauth
 from storage import DictCache
 from session import SessionHandler
@@ -30,7 +30,8 @@ api.add_resource(GoogleSignInController, '/googlesignin', endpoint="googlesignin
 api.add_resource(GoogleSignInController, '/googlesignin/<type>', endpoint="googlesignin/type", resource_class_args=(logger, google_oauth, session_handler,))
 
 certificate_handler = CertificateFromKeyvault(config.common.SigningCertificateUri, timedelta(hours=1), config.common.KeyVaultAuthTokenUri)
-api.add_resource(PublicCertificate, '/public_certificate', endpoint="public_certificate", resource_class_args=(logger, certificate_handler,))
+api.add_resource(PublicCertificates, '/oauth2/public_certificates', endpoint="oauth2_public_certificates", resource_class_args=(logger, certificate_handler,))
+api.add_resource(PublicCertificates, '/session/public_certificates', endpoint="session_public_certificates", resource_class_args=(logger, certificate_handler,))
 
 certificate_handler = CertificateFromKeyvault(config.common.SigningCertificateUri, timedelta(hours=1), config.common.KeyVaultAuthTokenUri)
 rsa_key_handler = RSAKeyHandler(certificate_handler)

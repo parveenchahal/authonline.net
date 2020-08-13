@@ -19,8 +19,8 @@ class SessionHandler():
         self.__next_validation = timedelta(minutes=1)
         self.__jwt_token_handler = jwt_token_handler
 
-    def __generate_key(self, username: str, sid: str) -> str:
-        key = f"{username}-{sid}"
+    def __generate_key(self, usr: str, sid: str) -> str:
+        key = f"{usr}-{sid}"
         key = str(uuid.uuid5(uuid.NAMESPACE_OID, key))
         return key
 
@@ -34,14 +34,14 @@ class SessionHandler():
         session = Session(
             sid=sid,
             amr=amr,
-            username=username,
-            resource=resource,
-            expiry=exp,
-            next_validation=next_validation,
-            seq_num=1
+            usr=username,
+            res=resource,
+            exp=exp,
+            raf=next_validation,
+            sqn=1
         )
         
-        key = self.__generate_key(session.username, session.sid)
+        key = self.__generate_key(session.usr, session.sid)
         data = self.__storage.add_or_update(key, session.to_dict())
         return Session(**data)
 

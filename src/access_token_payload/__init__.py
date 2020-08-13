@@ -2,15 +2,16 @@ import uuid
 from datetime import datetime, timedelta
 from session.models import Session
 from access_token_payload.models.access_token_payload_model import AccessTokenPayloadModel
+import config.common as _config
 
 
 def generate_access_token_payload_using_session(session: Session, remote_addr: str, expiry: timedelta = timedelta(hours=1)) -> AccessTokenPayloadModel:
     access_token = AccessTokenPayloadModel()
-    access_token.aud = session.resource
-    access_token.iss = "https://authonline.net"
+    access_token.aud = session.res
+    access_token.iss = _config.BaseUrl
     access_token.scp = 'user_impersonation'
     access_token.sub = session.sid
-    access_token.username = session.username
+    access_token.usr = session.usr
     access_token.amr = session.amr
     access_token.remote_addr = remote_addr
 
