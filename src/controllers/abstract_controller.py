@@ -6,9 +6,11 @@ from common.utils import to_json_string
 class Controller(Resource):
 
     _logger: Logger
+    endpoint: str
 
     def __init__(self, logger: Logger):
         self._logger = logger
+        self.endpoint = self.endpoint
 
     def get(self):
         pass
