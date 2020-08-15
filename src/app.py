@@ -2,7 +2,7 @@ import logging
 from flask import Flask
 from flask_restful import Api
 import config
-from controllers import GoogleSignInController, Login, PublicCertificates, AuthOnlineToken
+from controllers import Login, Logout, GoogleSignInController, PublicCertificates, AuthOnlineToken
 from google_oauth import GoogleOauth
 from storage import StorageDictCache
 from session import SessionHandler
@@ -46,6 +46,8 @@ rsa_private_key_handler = RSAPrivateKeyHandler(certificate_handler)
 rsa_public_key_handler = RSAPublicKeyHandler(certificate_handler)
 jwt_handler = JWTHandler(rsa_private_key_handler, rsa_public_key_handler)
 auth_filter.init_session_auth_filter(jwt_handler, session_handler)
+
+api.add_resource(Logout, '/logout', endpoint="logout", resource_class_args=(logger, session_handler,))
 
 if __name__ == '__main__':
     app.run(debug=False, host="0.0.0.0", port=5000)
