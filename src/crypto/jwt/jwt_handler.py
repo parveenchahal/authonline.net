@@ -18,8 +18,8 @@ class JWTHandler(object):
 
     def encode(self, payload: dict) -> str:
         key = self._signing_key_handler.get()[0]
-        access_token = self._jwt.encode(payload, key, alg=self._alg)
-        return access_token
+        jwt_token = self._jwt.encode(payload, key, alg=self._alg)
+        return jwt_token
 
     def decode(self, token: str, verify_signature: bool = True) -> dict:
         if verify_signature:

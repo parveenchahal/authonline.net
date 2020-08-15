@@ -12,24 +12,24 @@ class CertificateFromKeyvault(CertificateHandler):
 
     __secret_uri: str
     __cached_secret: List[Certificate]
-    __last_read: datetime
+    __next_read: datetime
     __auth_uri: str
-    __expires_in: timedelta
+    __cache_timeout: timedelta
     __lock: RLock
 
     def __init__(self, secret_uri: str, cache_timeout: timedelta, auth_uri: str):
         self.__secret_uri = secret_uri
         self.__cached_secret = None
-        self.__last_read = None
+        self.__cache_timeout = cache_timeout
+        self.__next_read = None
         self.__auth_uri = auth_uri
         self.__lock = RLock()
 
     def __update_required(self, now):
-        return self.__cached_secret is None or self.__last_read is None or now >= self.__last_read
+        return self.__cached_secret is None or self.__next_read is None or now >= self.__next_read
 
-    def get(self) -> (List[Certificate], bool):
+    def get(self) -> List[Certificate]:
         now = datetime.utcnow()
-        updated = False
         if self.__update_required(now):
             with self.__lock:
                 if self.__update_required(now):
@@ -40,6 +40,5 @@ class CertificateFromKeyvault(CertificateHandler):
                     cert_list = parse_json(value)
                     cert_list = [Certificate.from_json_string(Certificate, to_json_string(x)) for x in cert_list]
                     self.__cached_secret = cert_list
-                    self.__last_read = now
-                    updated = True
-        return copy.deepcopy(self.__cached_secret), updated
+                    self.__next_read = now + self.__cache_timeout
+        return copy.deepcopy(self.__cached_secret)
