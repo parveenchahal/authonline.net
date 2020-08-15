@@ -1,5 +1,17 @@
-class LoginFailure(Exception):
+class LoginFailureError(Exception):
     pass
 
-class MissingParam(Exception):
+class MissingParamError(Exception):
+    pass
+
+class CannotBeCalledMoreThanOnceError(Exception):
+    pass
+
+class SessionCookieNotFoundError(Exception):
+    pass
+
+class SessionExpiredError(Exception):
+    pass
+
+class JWTTokenInvalidSignatureError(Exception):
     pass

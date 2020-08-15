@@ -1,2 +1,2 @@
 from storage.storage import Storage
-from storage.dict_cache import DictCache
+from storage.storage_dict_cache import StorageDictCache

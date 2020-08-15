@@ -1,12 +1,14 @@
 from abc import abstractmethod
+from storage.models import StorageEntryModel
+from common.abstract_model import Model
 
 class Storage():
     @abstractmethod
-    def get(self, key: str) -> dict:
+    def get(self, key: str, model_for_data: Model) -> StorageEntryModel:
         raise NotImplementedError()
     
     @abstractmethod
-    def add_or_update(self, key: str, data: dict) -> dict:
+    def add_or_update(self, storage_entry: StorageEntryModel):
         raise NotImplementedError()
 
     @abstractmethod

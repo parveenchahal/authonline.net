@@ -7,7 +7,8 @@ SigningCertificateUri = "https://pckv1.vault.azure.net/secrets/authonline-token-
 
 KeyVaultAuthTokenUri = None
 
-SessionExpiry: timedelta = timedelta(days=1)
+SessionExpiry: timedelta = timedelta(minutes=10)
+RefreshSessionAfterInterval = timedelta(seconds=20)
 
 def init():
     global KeyVaultAuthTokenUri

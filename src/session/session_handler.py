@@ -3,21 +3,22 @@ import uuid
 from datetime import datetime, timedelta
 from session.models import Session
 from storage.storage import Storage
-from crypto.jwt.jwt_token_handler import JWTTokenHandler
+from crypto.jwt import JWTHandler
+from storage.models import StorageEntryModel
 
 
 class SessionHandler():
 
-    __logger: Logger
-    __storage: Storage
-    __next_validation: timedelta
-    __jwt_token_handler: JWTTokenHandler
+    _logger: Logger
+    _storage: Storage
+    _refresh_session_interval: timedelta
+    _jwt_handler: JWTHandler
 
-    def __init__(self, logger: Logger, storage: Storage, jwt_token_handler: JWTTokenHandler):
-        self.__logger = logger
-        self.__storage = storage
-        self.__next_validation = timedelta(minutes=1)
-        self.__jwt_token_handler = jwt_token_handler
+    def __init__(self, logger: Logger, storage: Storage, jwt_handler: JWTHandler, refresh_session_interval: timedelta = timedelta(minutes=5)):
+        self._logger = logger
+        self._storage = storage
+        self._refresh_session_interval = refresh_session_interval
+        self._jwt_handler = jwt_handler
 
     def __generate_key(self, usr: str, sid: str) -> str:
         key = f"{usr}-{sid}"
@@ -29,7 +30,7 @@ class SessionHandler():
         exp = int(datetime.timestamp(now_utc + expiry))
 
         sid = str(uuid.uuid5(uuid.NAMESPACE_OID, f"{id} + {str(exp)}"))
-        next_validation = int(datetime.timestamp(now_utc + self.__next_validation))
+        next_validation = int(datetime.timestamp(now_utc + self._refresh_session_interval))
 
         session = Session(
             sid=sid,
@@ -40,20 +41,48 @@ class SessionHandler():
             raf=next_validation,
             sqn=1
         )
-        
         key = self.__generate_key(session.usr, session.sid)
-        data = self.__storage.add_or_update(key, session.to_dict())
-        return Session(**data)
+        storage_entry = StorageEntryModel(**{
+            "key": key,
+            "data": session
+        })
+        self._storage.add_or_update(storage_entry)
+        return session
+    
+    def refresh(self, session: Session) -> Session:
+        #
+        #TODO: Need to add retires if pre-condition fails
+        #
+        storage_entry = self._storage.get(self.__generate_key(session.usr, session.sid), Session)
+        if storage_entry is None:
+            return None
+        s: Session = storage_entry.data
+        if s.is_expired:
+            return None
+        if s.sqn - session.sqn > 1:
+            self.delete(s.usr, s.sid)
+            return None
+        if not s.refresh_required:
+            return s
+        s.sqn = s.sqn + 1
+        s.raf = int(datetime.timestamp(datetime.utcnow() + self._refresh_session_interval))
+        storage_entry.data = s
+        self._storage.add_or_update(storage_entry)
+        return s
 
     def get(self, username: str, session_id: str, seq_no: int) -> Session:
         key = self.__generate_key(username, session_id)
-        data = self.__storage.get(key)
-        return Session(**data)
+        data = self._storage.get(key, Session)
+        if data is not None:
+            s = Session(**(data.data))
+            if not s.is_expired:
+                return s
+        return None
 
     def sign(self, session: Session) -> str:
-        signed_session = self.__jwt_token_handler.sign(session.to_dict())
+        signed_session = self._jwt_handler.encode(session.to_dict())
         return signed_session
 
     def delete(self, username: str, session_id: str) -> bool:
         key = self.__generate_key(username, session_id)
-        return self.__storage.delete(key)
+        return self._storage.delete(key)

@@ -12,10 +12,10 @@ class Login(Controller):
     def __validate_query_params(self, args: dict):
         resource = args.get("resource", None)
         if resource is None:
-            raise exceptions.MissingParam("resource is missing")
+            raise exceptions.MissingParamError("resource is missing")
         redirect_uri = args.get("redirect_uri", None)
         if redirect_uri is None:
-            raise exceptions.MissingParam("redirect_uri is missing")
+            raise exceptions.MissingParamError("redirect_uri is missing")
 
     def __update_page_with_values(self, page: str, args: dict):
         resource = args.get('resource')
@@ -38,7 +38,7 @@ class Login(Controller):
                 data = f.read()
                 data = self.__update_page_with_values(data, args)
                 return Response(data, mimetype='text/html')
-        except exceptions.MissingParam as e:
+        except exceptions.MissingParamError as e:
             self._logger.exception(e)
             return BadRequest()
         except Exception as e:

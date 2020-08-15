@@ -10,7 +10,7 @@ class GoogleOauth:
         credentials = client.credentials_from_clientsecrets_and_code(secret, scopes, auth_code, redirect_uri=redirect_uri)
         if credentials:
             return self.__tokens_output(credentials)
-        raise exceptions.LoginFailure("Not able to sign in with given code")
+        raise exceptions.LoginFailureError("Not able to sign in with given code")
 
     def __tokens_output(self, credentials: OAuth2Credentials) -> dict:
         return {

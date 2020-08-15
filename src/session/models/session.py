@@ -15,14 +15,17 @@ class Session(Model):
     exp: int
     raf: int
     sqn: int
-    etag: str = "*"
     
     def to_dict(self) -> dict:
         d = super().to_dict(True)
-        d.pop("etag", None)
         return d
 
     @property
-    def is_valid(self) -> bool:
+    def is_expired(self) -> bool:
         now = int(datetime.timestamp(datetime.utcnow()))
-        return now < self.exp
+        return now >= self.exp
+
+    @property
+    def refresh_required(self):
+        now = int(datetime.timestamp(datetime.utcnow()))
+        return now >= self.raf

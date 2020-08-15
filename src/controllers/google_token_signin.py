@@ -23,13 +23,13 @@ class GoogleSignInController(Controller):
     def __validate_auth_request(self, args: dict):
         code = args.get("code", None)
         if code is None:
-            raise exceptions.MissingParam("code is missing")
+            raise exceptions.MissingParamError("code is missing")
         scopes = args.get("scope", None)
         if scopes is None:
-            raise exceptions.MissingParam("scopes is missing")
+            raise exceptions.MissingParamError("scopes is missing")
         state = args.get("state", None)
         if state is None:
-            raise exceptions.MissingParam("state is missing")
+            raise exceptions.MissingParamError("state is missing")
 
     def __auth(self, args: dict):
         self.__validate_auth_request(args)
@@ -59,10 +59,10 @@ class GoogleSignInController(Controller):
                 return redirect(login_url, code=302)
             else:
                 return NotFound()
-        except exceptions.LoginFailure as e:
+        except exceptions.LoginFailureError as e:
             self._logger.exception(e)
             return Unauthorized()
-        except exceptions.MissingParam as e:
+        except exceptions.MissingParamError as e:
             self._logger.exception(e)
             return BadRequest()
         except Exception as e:
