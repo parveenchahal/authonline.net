@@ -17,8 +17,3 @@ class Controller(Resource):
 
     def post(self):
         pass
-
-    def _json_response(self, data, http_status=200):
-        if isinstance(data, (list, dict)):
-            data = to_json_string(data)
-        return _Response(response=data, status=http_status, mimetype='application/json')

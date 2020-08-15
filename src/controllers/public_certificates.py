@@ -1,7 +1,7 @@
 from controllers import Controller
 from crypto.certificate_handler import CertificateHandler
 from common.utils import encode_base64
-from error_responses import InternalServerError
+import http_responses
 
 class PublicCertificates(Controller):
 
@@ -17,4 +17,4 @@ class PublicCertificates(Controller):
             return [encode_base64(x.certificate) for x in cert_list], 200
         except Exception as e:
             self._logger.exception(e)
-            return InternalServerError()
+            return http_responses.InternalServerErrorResponse()

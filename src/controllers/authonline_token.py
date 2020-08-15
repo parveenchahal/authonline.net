@@ -6,6 +6,8 @@ from session.models import Session
 from access_token_payload import generate_access_token_payload_using_session as _generate_access_token_payload_using_session
 import auth_filter
 from common.utils import to_json_string
+import http_responses
+from http_responses.models import Oath2TokenResponse
 
 class AuthOnlineToken(Controller):
 
@@ -21,5 +23,8 @@ class AuthOnlineToken(Controller):
         cookie: str = request.cookies.get("session")
         session = Session(**(JWTHandler.decode_payload(cookie.split('.')[1])))
         payload = _generate_access_token_payload_using_session(session, remote_addr)
-        credentials = self._jwt_handler.encode(payload.to_dict())
-        return self._json_response({'access_token': credentials})
+        access_token = self._jwt_handler.encode(payload.to_dict())
+        token_response = Oath2TokenResponse(**{
+            "access_token": access_token
+        })
+        return http_responses.JSONResponse(token_response)

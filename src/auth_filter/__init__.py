@@ -7,7 +7,7 @@ import exceptions
 from session.models import Session
 from session import SessionHandler
 from auth_filter.session_validator import SessionValidator
-import error_responses
+import http_responses
 from logging import Logger
 
 _logger: Logger
@@ -35,11 +35,11 @@ def _validate_session(f, set_cookie_for_refreshed_session, *args, **kwargs):
         refreshed_session, expiry = _session_validator.validate(session_cookie)
     except exceptions.SessionCookieNotFoundError as ex:
         _logger.exception(ex)
-        return error_responses.Unauthorized("Session can't be validated")
+        return http_responses.UnauthorizedResponse("Session can't be validated")
     except Exception as ex:
         _logger.exception(ex)
         #raise ex
-        err_res = error_responses.Unauthorized("Session can't be validated")
+        err_res = http_responses.UnauthorizedResponse("Session can't be validated")
         err_res.set_cookie('session', "", expires=datetime.utcnow(), secure=True, httponly=True)
         return err_res
     res = f(*args, **kwargs)

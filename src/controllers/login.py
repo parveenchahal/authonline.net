@@ -5,7 +5,7 @@ from controllers import Controller
 from flask_restful import request, url_for, ResponseBase as Response
 import config
 import exceptions
-from error_responses import BadRequest, InternalServerError
+import http_responses
 
 class Login(Controller):
 
@@ -40,7 +40,7 @@ class Login(Controller):
                 return Response(data, mimetype='text/html')
         except exceptions.MissingParamError as e:
             self._logger.exception(e)
-            return BadRequest()
+            return http_responses.BadRequestResponse()
         except Exception as e:
             self._logger.exception(e)
-            return InternalServerError()
+            return http_responses.InternalServerErrorResponse()

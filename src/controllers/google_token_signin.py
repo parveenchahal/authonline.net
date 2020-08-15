@@ -4,7 +4,7 @@ from flask import redirect
 from flask_restful import request
 from logging import Logger
 from google_oauth import GoogleOauth
-from error_responses import Unauthorized, BadRequest, NotFound, InternalServerError
+import http_responses
 import exceptions
 from session import SessionHandler
 from urllib.parse import urlparse, ParseResult
@@ -58,13 +58,13 @@ class GoogleSignInController(Controller):
                 login_url = f'{login_url}&state={to_json_string(args)}'
                 return redirect(login_url, code=302)
             else:
-                return NotFound()
+                return http_responses.NotFoundResponse()
         except exceptions.LoginFailureError as e:
             self._logger.exception(e)
-            return Unauthorized()
+            return http_responses.UnauthorizedResponse()
         except exceptions.MissingParamError as e:
             self._logger.exception(e)
-            return BadRequest()
+            return http_responses.BadRequestResponse()
         except Exception as e:
             self._logger.exception(e)
-            return InternalServerError()
+            return http_responses.InternalServerErrorResponse()
