@@ -61,7 +61,7 @@ class GoogleSignInController(Controller):
             if "auth".__eq__(type):
                 return self._auth(args)
             elif "".__eq__(type) or "/".__eq__(type):
-                login_url = config.LoginUrl
+                login_url = config.google_token_signin.LoginUrl
                 login_url = f'{login_url}&state={to_json_string(args)}'
                 return redirect(login_url, code=302)
             else:
