@@ -27,7 +27,7 @@ class SessionValidator(object):
         return None
 
     def validate(self, session_string: str) -> (str, int):
-        payload = self._jwt_handler.decode(session_string, verify_signature=False)
+        payload = self._jwt_handler.decode(session_string)
         refreshed_session = self._validate_payload(Session(**payload))
         if refreshed_session is not None:
             signed_session = self._session_handler.sign(refreshed_session)

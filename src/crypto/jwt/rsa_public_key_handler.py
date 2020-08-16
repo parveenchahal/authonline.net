@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from threading import RLock
 from jwt.jwk import AbstractJWKBase, RSAJWK, load_pem_public_key, default_backend
+from cryptography import x509
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from ..certificate_handler import CertificateHandler
 from .key_handler import KeyHandler
 from typing import List
@@ -24,8 +26,10 @@ class RSAPublicKeyHandler(KeyHandler):
         return self._key_list is None or self._next_read is None or now >= self._next_read
 
     def _get_key_obj(self, key: bytes) -> RSAJWK:
-        key = load_pem_public_key(key, backend=default_backend())
-        return RSAJWK(key)
+        cert = x509.load_pem_x509_certificate(key, default_backend())
+        public_key = cert.public_key().public_bytes(Encoding.PEM, PublicFormat.PKCS1)
+        public_key = load_pem_public_key(public_key, default_backend())
+        return RSAJWK(public_key)
 
 
     def get(self) -> List[AbstractJWKBase]:
