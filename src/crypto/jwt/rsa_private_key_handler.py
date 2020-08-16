@@ -27,7 +27,6 @@ class RSAPrivateKeyHandler(KeyHandler):
         key = load_pem_private_key(key, password=None, backend=default_backend())
         return RSAJWK(key)
 
-
     def get(self) -> List[AbstractJWKBase]:
         now = datetime.utcnow()
         if self._update_required(now):
