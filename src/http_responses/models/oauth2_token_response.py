@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from http_responses.models.response_model import ResponseModel as _ResponseModel
+from common.abstract_model import Model as _Model
 
 @dataclass
-class Oath2TokenResponse(_ResponseModel):
+class Oath2TokenResponse(_Model):
     access_token: str

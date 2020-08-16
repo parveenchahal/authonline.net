@@ -2,12 +2,12 @@ from http_responses.abstract_response import Response
 from typing import Union, List, Text, Mapping, Sequence, Optional
 from http import HTTPStatus
 import json
-from http_responses.models.response_model import ResponseModel
+from common.abstract_model import Model
 
 class JSONResponse(Response):
 
     def __init__(self,
-        response: Union[ResponseModel, List[ResponseModel]],
+        response: Union[Model, List[Model]],
         status: HTTPStatus = HTTPStatus.OK,
         headers: Optional[Sequence[Mapping[Text, Text]]] = None):
         if isinstance(response, List):
@@ -17,5 +17,5 @@ class JSONResponse(Response):
         super().__init__(json.dumps(response), status.value, headers, "application/json")
     
     @staticmethod
-    def __convert_to_list_of_dict(response_list: List[ResponseModel]):
+    def __convert_to_list_of_dict(response_list: List[Model]):
         return [res.to_dict() for res in response_list]

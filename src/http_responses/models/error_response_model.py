@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from http_responses.models.response_model import ResponseModel as _ResponseModel
+from common.abstract_model import Model as _Model
 from http import HTTPStatus
 
 @dataclass
-class ErrorResponseModel(_ResponseModel):
+class ErrorResponseModel(_Model):
     http_status_code: HTTPStatus
     error_message: str
