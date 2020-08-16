@@ -1,8 +1,8 @@
 from logging import Logger
 import uuid
 from datetime import datetime, timedelta
-from session.models import Session
-from storage.storage import Storage
+from .models import Session
+from storage import Storage
 from crypto.jwt import JWTHandler
 from storage.models import StorageEntryModel
 

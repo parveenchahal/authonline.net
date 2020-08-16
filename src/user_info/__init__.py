@@ -1,14 +1,18 @@
 from storage import Storage
-from user_info.models import UserInfoModel
+from .models import UserInfoModel
 from requests import request as http_request 
 from common.utils import parse_json
 from storage.models import StorageEntryModel
+from logging import Logger
 
 class UserInfoHandler(object):
 
+    _logger: Logger
     _storage: Storage
+    _google_userinfo_endpoint: str = "https://openidconnect.googleapis.com/v1/userinfo"
 
-    def __init__(self, storage: Storage):
+    def __init__(self, logger: Logger, storage: Storage):
+        self._logger = logger
         self._storage = storage
 
     @staticmethod
@@ -21,7 +25,7 @@ class UserInfoHandler(object):
         return storage_entry.data
 
     def fetch_and_store_from_google(self, username: str, session_id: str, access_token: str):
-        res = http_request('GET', "https://openidconnect.googleapis.com/v1/userinfo", headers={"Authorization": f'Bearer {access_token}'})
+        res = http_request('GET', self._google_userinfo_endpoint, headers={"Authorization": f'Bearer {access_token}'})
         info_dict = parse_json(res.text)
         user_info = UserInfoModel()
         

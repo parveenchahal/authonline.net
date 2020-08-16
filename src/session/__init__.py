@@ -1,1 +1,1 @@
-from session.session_handler import SessionHandler
+from .session_handler import SessionHandler

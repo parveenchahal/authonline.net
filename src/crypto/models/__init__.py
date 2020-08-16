@@ -1,1 +1,1 @@
-from crypto.models.certificate import Certificate
+from .certificate import Certificate

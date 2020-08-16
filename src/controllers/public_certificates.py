@@ -1,4 +1,4 @@
-from controllers import Controller
+from .abstract_controller import Controller
 from crypto.certificate_handler import CertificateHandler
 from common.utils import encode_base64
 import http_responses

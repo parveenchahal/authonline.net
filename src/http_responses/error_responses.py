@@ -1,7 +1,7 @@
-from http_responses.json_response import JSONResponse as _JSONResponse
+from .json_response import JSONResponse as _JSONResponse
 import json
 from http import HTTPStatus
-from http_responses.models.error_response_model import ErrorResponseModel
+from .models.error_response_model import ErrorResponseModel
 
 
 class ErrorResponse(_JSONResponse):

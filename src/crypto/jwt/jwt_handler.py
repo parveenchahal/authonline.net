@@ -1,5 +1,5 @@
 from jwt import JWT
-from crypto.jwt.key_handler import KeyHandler
+from .key_handler import KeyHandler
 from jwt.utils import b64decode as _b64decode
 from common.utils import bytes_to_string, parse_json
 import exceptions

@@ -20,7 +20,7 @@ def init_logger(logger: Logger):
 def init_session_auth_filter(jwt_handler: JWTHandler, session_handler: SessionHandler):
     global _session_validator
     if _session_validator is None:
-        _session_validator = SessionValidator(jwt_handler, session_handler)
+        _session_validator = SessionValidator(_logger, jwt_handler, session_handler)
         return
     raise exceptions.CannotBeCalledMoreThanOnceError("init_session_auth_filter can't be called more than once")
 

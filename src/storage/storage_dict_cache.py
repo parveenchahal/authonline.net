@@ -1,7 +1,7 @@
 from cachetools import TTLCache, Cache
-from storage.storage import Storage
+from .abstract_storage import Storage
 from common.abstract_model import Model
-from storage.models import StorageEntryModel
+from .models import StorageEntryModel
 from threading import RLock
 
 

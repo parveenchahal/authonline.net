@@ -24,7 +24,7 @@ auth_filter.init_logger(logger)
 
 api.add_resource(Login, '/login', endpoint="login", resource_class_args=(logger,))
 
-userinfo_handler = UserInfoHandler(StorageDictCache())
+userinfo_handler = UserInfoHandler(logger, StorageDictCache())
 
 google_oauth = GoogleOauth()
 certificate_handler = CertificateFromKeyvault(config.common.SigningCertificateUri, timedelta(hours=1), config.common.KeyVaultAuthTokenUri)

@@ -1,5 +1,5 @@
-from controllers.abstract_controller import Controller
-import config.google_token_signin as config
+from .abstract_controller import Controller
+import config
 from flask import redirect
 from flask_restful import request
 from logging import Logger
@@ -45,7 +45,7 @@ class GoogleSignInController(Controller):
         redirect_uri = state.get('redirect_uri')
         user_state_param = state.get('state')
 
-        credentials = self._google_oauth.get_token_using_authorization_code(code, scopes, config.RedirectUri)
+        credentials = self._google_oauth.get_token_using_authorization_code(code, scopes, config.google_token_signin.RedirectUri)
 
         username = credentials['username']
         session = self._session_handler.create(username, ["Google login",], resource, config.common.SessionExpiry)

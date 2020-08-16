@@ -3,12 +3,16 @@ from crypto.jwt import JWTHandler
 from session.models import Session
 from session import SessionHandler
 import exceptions
+from logging import Logger
 
 class SessionValidator(object):
+
+    _logger: Logger
     _jwt_handler: JWTHandler
     _session_handler: SessionHandler
 
-    def __init__(self, jwt_handler: JWTHandler, session_handler: SessionHandler):
+    def __init__(self, logger: Logger, jwt_handler: JWTHandler, session_handler: SessionHandler):
+        self._logger = logger
         self._jwt_handler = jwt_handler
         self._session_handler = session_handler
 

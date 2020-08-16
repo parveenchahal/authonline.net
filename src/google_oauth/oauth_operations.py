@@ -9,10 +9,10 @@ class GoogleOauth:
         secret = os.environ['GOOGLE_OAUTH_SECRET_FILE_PATH']
         credentials = client.credentials_from_clientsecrets_and_code(secret, scopes, auth_code, redirect_uri=redirect_uri)
         if credentials:
-            return self.__tokens_output(credentials)
+            return self._tokens_output(credentials)
         raise exceptions.LoginFailureError("Not able to sign in with given code")
 
-    def __tokens_output(self, credentials: OAuth2Credentials) -> dict:
+    def _tokens_output(self, credentials: OAuth2Credentials) -> dict:
         return {
             'username': credentials.id_token['email'],
             'id_token': credentials.token_response["id_token"],

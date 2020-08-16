@@ -1,1 +1,1 @@
-from google_oauth.oauth_operations import GoogleOauth
+from .oauth_operations import GoogleOauth

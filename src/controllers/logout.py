@@ -1,6 +1,6 @@
 from flask_restful import request
 from datetime import datetime
-from controllers.abstract_controller import Controller
+from .abstract_controller import Controller
 from session import SessionHandler
 from session.models import Session
 from crypto.jwt import JWTHandler

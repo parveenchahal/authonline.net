@@ -1,2 +1,2 @@
-from crypto.certificate_handler import CertificateHandler
-from crypto.certificate_from_keyvault import CertificateFromKeyvault
+from .certificate_handler import CertificateHandler
+from .certificate_from_keyvault import CertificateFromKeyvault

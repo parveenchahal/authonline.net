@@ -1,6 +1,6 @@
 from flask_restful import request
 from session.models import Session
-from controllers.abstract_controller import Controller
+from .abstract_controller import Controller
 from user_info import UserInfoHandler
 from crypto.jwt import JWTHandler
 from http_responses import JSONResponse

@@ -1,4 +1,4 @@
-from http_responses.abstract_response import Response
+from .abstract_response import Response
 from typing import Union, List, Text, Mapping, Sequence, Optional
 from http import HTTPStatus
 import json

@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from storage.models import StorageEntryModel
+from .models import StorageEntryModel
 from common.abstract_model import Model
 
 class Storage():

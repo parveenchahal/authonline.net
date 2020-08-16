@@ -1,6 +1,6 @@
 from logging import Logger
 from flask_restful import request
-from controllers.abstract_controller import Controller
+from .abstract_controller import Controller
 from crypto.jwt import JWTHandler
 from session.models import Session
 from access_token_payload import generate_access_token_payload_using_session as _generate_access_token_payload_using_session
