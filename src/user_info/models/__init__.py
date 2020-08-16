@@ -1,5 +1,7 @@
+from dataclasses import dataclass
 from common.abstract_model import Model as _Model
 
+@dataclass
 class UserInfoModel(_Model):
     username: str = None
     name: str = None
@@ -9,3 +11,5 @@ class UserInfoModel(_Model):
     email_verified: bool = None,
     photo_url: str = None
 
+    def to_dict(self):
+        return super().to_dict(omit_none=True)
