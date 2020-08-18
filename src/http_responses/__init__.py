@@ -1,3 +1,3 @@
-from .abstract_response import Response
-from .error_responses import *
-from .json_response import JSONResponse
+from ._abstract_response import Response
+from ._error_responses import *
+from ._json_response import JSONResponse

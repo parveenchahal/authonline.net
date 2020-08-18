@@ -1,4 +1,4 @@
-from .abstract_controller import Controller
+from ._abstract_controller import Controller
 import config
 from flask import redirect
 from flask_restful import request

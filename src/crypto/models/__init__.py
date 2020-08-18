@@ -1,1 +1,1 @@
-from .certificate import Certificate
+from ._certificate import Certificate

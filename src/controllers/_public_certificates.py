@@ -1,9 +1,9 @@
-from .abstract_controller import Controller
-from crypto.certificate_handler import CertificateHandler
+from ._abstract_controller import Controller
+from crypto import CertificateHandler
 from common.utils import encode_base64
 import http_responses
 
-class PublicCertificates(Controller):
+class PublicCertificatesController(Controller):
 
     _certificate_handler: CertificateHandler
 

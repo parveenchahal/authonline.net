@@ -1,12 +1,12 @@
 from flask_restful import request
 from session.models import Session
-from .abstract_controller import Controller
+from ._abstract_controller import Controller
 from user_info import UserInfoHandler
 from crypto.jwt import JWTHandler
 from http_responses import JSONResponse
 import auth_filter
 
-class UserInfo(Controller):
+class UserInfoController(Controller):
 
     _userinfo_handler: UserInfoHandler
 

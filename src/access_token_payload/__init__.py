@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timedelta
 from session.models import Session
-from .models.access_token_payload_model import AccessTokenPayloadModel
+from .models import AccessTokenPayloadModel
 import config.common as _config
 
 

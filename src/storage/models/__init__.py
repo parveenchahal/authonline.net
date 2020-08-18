@@ -1,1 +1,1 @@
-from storage.models.storage_entry_model import StorageEntryModel
+from ._storage_entry_model import StorageEntryModel

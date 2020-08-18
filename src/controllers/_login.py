@@ -1,13 +1,13 @@
 import os
 import urllib.parse as urlparse
 from flask import redirect, render_template
-from .abstract_controller import Controller
+from ._abstract_controller import Controller
 from flask_restful import request, url_for, ResponseBase as Response
 import config
 import exceptions
 import http_responses
 
-class Login(Controller):
+class LoginController(Controller):
 
     def _validate_query_params(self, args: dict):
         resource = args.get("resource", None)

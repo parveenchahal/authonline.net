@@ -1,6 +1,6 @@
 from flask_restful import request
 from datetime import datetime
-from .abstract_controller import Controller
+from ._abstract_controller import Controller
 from session import SessionHandler
 from session.models import Session
 from crypto.jwt import JWTHandler
@@ -8,7 +8,7 @@ import auth_filter
 import http_responses
 from http_responses.models import MessageResponseModel
 
-class Logout(Controller):
+class LogoutController(Controller):
 
     _session_handler: SessionHandler
 

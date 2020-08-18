@@ -1,1 +1,1 @@
-from session.models.session import Session
+from ._session import Session

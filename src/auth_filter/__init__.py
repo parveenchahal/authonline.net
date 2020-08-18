@@ -6,12 +6,12 @@ from crypto.jwt import JWTHandler
 import exceptions
 from session.models import Session
 from session import SessionHandler
-from auth_filter.session_validator import SessionValidator
+from ._session_validator import SessionValidator as _SessionValidator
 import http_responses
 from logging import Logger
 
 _logger: Logger
-_session_validator: SessionValidator = None
+_session_validator: _SessionValidator = None
 
 def init_logger(logger: Logger):
     global _logger
@@ -20,7 +20,7 @@ def init_logger(logger: Logger):
 def init_session_auth_filter(jwt_handler: JWTHandler, session_handler: SessionHandler):
     global _session_validator
     if _session_validator is None:
-        _session_validator = SessionValidator(_logger, jwt_handler, session_handler)
+        _session_validator = _SessionValidator(_logger, jwt_handler, session_handler)
         return
     raise exceptions.CannotBeCalledMoreThanOnceError("init_session_auth_filter can't be called more than once")
 

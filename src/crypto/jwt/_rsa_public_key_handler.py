@@ -3,8 +3,8 @@ from threading import RLock
 from jwt.jwk import AbstractJWKBase, RSAJWK, load_pem_public_key, default_backend
 from cryptography import x509
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-from ..certificate_handler import CertificateHandler
-from .key_handler import KeyHandler
+from .._certificate_handler import CertificateHandler
+from ._key_handler import KeyHandler
 from typing import List
 
 class RSAPublicKeyHandler(KeyHandler):

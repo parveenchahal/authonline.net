@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from threading import RLock
 from jwt.jwk import AbstractJWKBase, RSAJWK, load_pem_private_key, default_backend
-from ..certificate_handler import CertificateHandler
-from .key_handler import KeyHandler
+from .._certificate_handler import CertificateHandler
+from ._key_handler import KeyHandler
 from typing import List
 
 class RSAPrivateKeyHandler(KeyHandler):

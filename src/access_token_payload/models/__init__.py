@@ -1,1 +1,1 @@
-from .access_token_payload_model import AccessTokenPayloadModel
+from ._access_token_payload_model import AccessTokenPayloadModel
