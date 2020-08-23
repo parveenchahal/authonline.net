@@ -20,7 +20,7 @@ class LogoutController(Controller):
     def get(self):
         cookie: str = request.cookies.get("session")
         session = Session(**(JWTHandler.decode_payload(cookie.split('.')[1])))
-        self._session_handler.delete(session.usr, session.sid)
+        self._session_handler.expires(session.oid, session.sid)
         msg = MessageResponseModel(**{
             "message": "You are successfully logged out."})
         res = http_responses.JSONResponse(msg)

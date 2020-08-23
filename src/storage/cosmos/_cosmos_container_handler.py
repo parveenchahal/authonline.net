@@ -66,10 +66,6 @@ class CosmosContainerHandler(Storage):
                 raise e
             break
 
-
-    def delete(self, id: str, partition_key: str) -> bool:
-        raise NotImplementedError()
-
     def _update_required(self, now):
         return self._next_read is None or now >= self._next_read
 

@@ -9,17 +9,9 @@ class Storage():
         raise NotImplementedError()
     
     @abstractmethod
-    def add(self, storage_entry: StorageEntryModel):
+    def add_or_update(self, storage_entry: StorageEntryModel):
         raise NotImplementedError()
 
     @abstractmethod
-    def update(self, storage_entry: StorageEntryModel):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def query(self, query_dict: dict) -> List[StorageEntryModel]:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def delete(self, id: str, partition_key: str) -> bool:
+    def delete(self, id: str, partition_key: str):
         raise NotImplementedError()

@@ -57,7 +57,7 @@ class SessionHandler():
         if s.is_expired:
             return None
         if s.sqn - session.sqn > 1:
-            self.delete(s.usr, s.sid)
+            self.expires(s.oid, s.sid)
             return None
         if not s.refresh_required:
             return s
@@ -75,7 +75,7 @@ class SessionHandler():
                 return None
         return s
 
-    def get(self, object_id: str, session_id: str, seq_no: int) -> Session:
+    def get(self, object_id: str, session_id: str) -> Session:
         data = self._storage.get(session_id, object_id, Session)
         if data is not None:
             s = Session(**(data.data))
@@ -87,5 +87,11 @@ class SessionHandler():
         signed_session = self._jwt_handler.encode(session.to_dict())
         return signed_session
 
-    def delete(self, object_id: str, session_id: str) -> bool:
-        return self._storage.delete(session_id, object_id)
+    def expires(self, object_id: str, session_id: str):
+        storage_entry = self._storage.get(session_id, object_id, Session)
+        if storage_entry is None:
+            return
+        s: Session = storage_entry.data
+        s.exp = int(datetime.utcnow().timestamp())
+        storage_entry.etag = '*'
+        return self._storage.add_or_update(storage_entry)
