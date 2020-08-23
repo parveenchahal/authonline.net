@@ -67,7 +67,7 @@ class SessionHandler():
         storage_entry.data = s
         try:
             self._storage.add_or_update(storage_entry)
-        except exceptions.AlreadyModified:
+        except exceptions.EtagMismatchError:
             storage_entry = self._storage.get(session.sid, session.oid, Session)
             if storage_entry is None:
                 return None

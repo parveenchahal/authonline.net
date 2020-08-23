@@ -1,6 +1,9 @@
 class LoginFailureError(Exception):
     pass
 
+class Unauthorized(Exception):
+    pass
+
 class MissingParamError(Exception):
     pass
 
@@ -16,10 +19,10 @@ class SessionExpiredError(Exception):
 class JWTTokenInvalidSignatureError(Exception):
     pass
 
-class ShouldNotHaveReachedHere(Exception):
+class ShouldNotHaveReachedHereError(Exception):
     pass
 
-class AlreadyModified(Exception):
+class EtagMismatchError(Exception):
     pass
 
 class IncorrectValue(Exception):

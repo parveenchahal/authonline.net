@@ -55,6 +55,9 @@ class GoogleSignInController(Controller):
 
         registered_details = self._session_registration_handler.get(client_id)
 
+        if registered_details is None:
+            raise exceptions.IncorrectValue(f'Client id {client_id} not found.')
+
         if resource not in registered_details.resources:
             raise exceptions.IncorrectValue(f'Resource {resource} is not registered for given client_id.')
         
@@ -101,10 +104,10 @@ class GoogleSignInController(Controller):
                 return http_responses.NotFoundResponse()
         except exceptions.LoginFailureError as e:
             self._logger.exception(e)
-            return http_responses.UnauthorizedResponse()
+            return http_responses.UnauthorizedResponse(str(e))
         except (exceptions.MissingParamError, exceptions.IncorrectValue) as e:
             self._logger.exception(e)
-            return http_responses.BadRequestResponse()
+            return http_responses.BadRequestResponse(str(e))
         except Exception as e:
             self._logger.exception(e)
             return http_responses.InternalServerErrorResponse()

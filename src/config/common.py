@@ -9,6 +9,8 @@ SigningCertificateName = "authonline-token-signing"
 
 CosmosDbConnectionStrings = "pc-cosmos-db-connection-string"
 
+CosmosOfferThroughput = 400
+
 DatebaseName = "authonline"
 
 SessionExpiry: timedelta = timedelta(days=60)

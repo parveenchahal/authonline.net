@@ -9,6 +9,7 @@ from common.abstract_model import Model
 import exceptions
 from azure.cosmos.exceptions import CosmosResourceNotFoundError, CosmosAccessConditionFailedError, CosmosHttpResponseError
 from azure.core import MatchConditions
+from http import HTTPStatus
 
 
 class CosmosContainerHandler(Storage):
@@ -30,15 +31,17 @@ class CosmosContainerHandler(Storage):
 
     def get(self, id: str, partition_key: str, model_for_data: Model) -> StorageEntryModel:
         client_list = self._get_clients()
+        retries = len(client_list)
         for client in client_list:
             try:
                 data = client.read_item(item=id, partition_key=partition_key)
             except CosmosResourceNotFoundError:
                 return None
             except CosmosHttpResponseError as e:
-                if 'Unauthorized'.__eq__(e.reason):
+                if retries > 1 and e.status_code == HTTPStatus.UNAUTHORIZED:
+                    retries -= 1
                     continue
-                raise e
+                raise exceptions.Unauthorized(e)
 
             entry = StorageEntryModel(**{
                 'id': data['id'],
@@ -47,7 +50,7 @@ class CosmosContainerHandler(Storage):
                 'etag': data.get('_etag', '*')
             })
             return entry
-        raise exceptions.ShouldNotHaveReachedHere()
+        raise exceptions.ShouldNotHaveReachedHereError()
     
     def add_or_update(self, storage_entry: StorageEntryModel):
         body = storage_entry.data.to_dict()
@@ -55,15 +58,17 @@ class CosmosContainerHandler(Storage):
         body['partition_key'] = storage_entry.partition_key
 
         client_list = self._get_clients()
+        retries = len(client_list)
         for client in client_list:
             try:
                 client.upsert_item(body=body, etag=storage_entry.etag, match_condition=MatchConditions.IfNotModified)
             except CosmosAccessConditionFailedError:
-                raise exceptions.AlreadyModified()
+                raise exceptions.EtagMismatchError()
             except CosmosHttpResponseError as e:
-                if 'Unauthorized'.__eq__(e.reason):
+                if retries > 1 and e.status_code == HTTPStatus.UNAUTHORIZED:
+                    retries -= 1
                     continue
-                raise e
+                raise exceptions.Unauthorized(e)
             break
 
     def _update_required(self, now):

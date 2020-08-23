@@ -5,7 +5,7 @@ from flask_restful import Api
 import config
 from controllers import LoginController, LogoutController, GoogleSignInController, PublicCertificatesController, AuthOnlineTokenController, UserInfoController
 from google_oauth import GoogleOauth
-from storage import create_cosmos_container_handler
+from storage.cosmos import create_cosmos_container_handler, create_database_container_if_not_exists
 from common.key_vault import KeyVaultSecret
 from common import AADToken
 from session import SessionHandler
@@ -17,6 +17,7 @@ import auth_filter
 from user_info import UserInfoHandler
 from user import UserHandler
 from registration import SessionRegistrationHandler
+from storage.cosmos import CosmosClientBuilderFromKeyvaultSecret
 
 config.init()
 
@@ -42,10 +43,12 @@ signing_certificate_handler = CertificateFromKeyvault(secret, timedelta(hours=1)
 
 #============================== Create Storage handlers ============================
 secret = KeyVaultSecret(config.common.KeyVaultName, config.common.CosmosDbConnectionStrings, key_vault_token)
-session_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'session', timedelta(hours=1), secret)
-user_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'user', timedelta(hours=1), secret)
-user_info_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'user_info', timedelta(hours=1), secret)
-registration_for_session_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'registration_for_session', timedelta(hours=1), secret)
+client_builder = CosmosClientBuilderFromKeyvaultSecret(secret)
+create_database_container_if_not_exists(client_builder, config.common.DatebaseName, ('user', 'session', 'user_info', 'registration_for_session'))
+session_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'session', timedelta(hours=1), client_builder)
+user_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'user', timedelta(hours=1), client_builder)
+user_info_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'user_info', timedelta(hours=1), client_builder)
+registration_for_session_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'registration_for_session', timedelta(hours=1), client_builder)
 
 userinfo_handler = UserInfoHandler(logger, user_info_storage_container)
 user_handler = UserHandler(user_storage_container)
