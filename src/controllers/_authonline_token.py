@@ -19,10 +19,9 @@ class AuthOnlineTokenController(Controller):
 
     @auth_filter.validate_session
     def get(self):
-        remote_addr = request.remote_addr
         cookie: str = request.cookies.get("session")
         session = Session(**(JWTHandler.decode_payload(cookie.split('.')[1])))
-        payload = _generate_access_token_payload_using_session(session, remote_addr)
+        payload = _generate_access_token_payload_using_session(session)
         access_token = self._jwt_handler.encode(payload.to_dict())
         token_response = Oath2TokenResponse(**{
             "access_token": access_token

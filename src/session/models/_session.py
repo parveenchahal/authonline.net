@@ -10,6 +10,7 @@ from dataclasses import dataclass
 class Session(Model):
     sid: str
     amr: list
+    oid: str
     usr: str
     res: str
     exp: int

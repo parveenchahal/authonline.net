@@ -6,23 +6,21 @@ import copy
 from threading import RLock
 from .models._certificate import Certificate
 from common.utils import parse_json, to_json_string
-
+from common.key_vault import KeyVaultSecret
 
 class CertificateFromKeyvault(CertificateHandler):
 
-    _secret_uri: str
+    _key_vault_secret: KeyVaultSecret
     _cached_secret: List[Certificate]
     _next_read: datetime
-    _auth_uri: str
     _cache_timeout: timedelta
     _lock: RLock
 
-    def __init__(self, secret_uri: str, cache_timeout: timedelta, auth_uri: str):
-        self._secret_uri = secret_uri
+    def __init__(self, key_vault_secret: KeyVaultSecret, cache_timeout: timedelta):
+        self._key_vault_secret = key_vault_secret
         self._cached_secret = None
         self._cache_timeout = cache_timeout
         self._next_read = None
-        self._auth_uri = auth_uri
         self._lock = RLock()
 
     def _update_required(self, now):
@@ -33,11 +31,8 @@ class CertificateFromKeyvault(CertificateHandler):
         if self._update_required(now):
             with self._lock:
                 if self._update_required(now):
-                    res = http_get(self._auth_uri)
-                    access_token = parse_json(res.text)["access_token"]
-                    res = request("GET", self._secret_uri, headers={"Authorization": f'Bearer {access_token}'})
-                    value = parse_json(res.text)['value']
-                    cert_list = parse_json(value)
+                    secret = self._key_vault_secret.get()
+                    cert_list = parse_json(secret)
                     cert_list = [Certificate.from_json_string(Certificate, to_json_string(x)) for x in cert_list]
                     self._cached_secret = cert_list
                     self._next_read = now + self._cache_timeout

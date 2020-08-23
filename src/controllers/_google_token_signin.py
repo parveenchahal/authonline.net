@@ -10,6 +10,7 @@ from session import SessionHandler
 from urllib.parse import urlparse, ParseResult
 from common.utils import parse_json, to_json_string
 from user_info import UserInfoHandler
+from user import UserHandler
 
 
 class GoogleSignInController(Controller):
@@ -17,12 +18,14 @@ class GoogleSignInController(Controller):
     _google_oauth: GoogleOauth
     _session_handler: SessionHandler
     _userinfo_handler: UserInfoHandler
+    _user_handler: UserHandler
 
-    def __init__(self, logger: Logger, google_oauth: GoogleOauth, session_handler: SessionHandler, userinfo_handler: UserInfoHandler):
+    def __init__(self, logger: Logger, google_oauth: GoogleOauth, session_handler: SessionHandler, user_handler: UserHandler,  userinfo_handler: UserInfoHandler):
         super().__init__(logger)
         self._google_oauth = google_oauth
         self._session_handler = session_handler
         self._userinfo_handler = userinfo_handler
+        self._user_handler = user_handler
 
     def _validate_auth_request(self, args: dict):
         code = args.get("code", None)
@@ -48,8 +51,11 @@ class GoogleSignInController(Controller):
         credentials = self._google_oauth.get_token_using_authorization_code(code, scopes, config.google_token_signin.RedirectUri)
 
         username = credentials['username']
-        session = self._session_handler.create(username, ["Google login",], resource, config.common.SessionExpiry)
-        self._userinfo_handler.fetch_and_store_from_google(session.usr, session.sid, credentials['access_token'])
+
+        user = self._user_handler.get_or_create(username, 'GoogleSignIn')
+
+        session = self._session_handler.create(username, user.object_id, ["GoogleSignIn",], resource, config.common.SessionExpiry)
+        self._userinfo_handler.fetch_and_store_from_google(user.object_id, session.sid, credentials['access_token'])
 
         signed_session = self._session_handler.sign(session)
         return redirect(f'{redirect_uri}?state={user_state_param}&session={signed_session}', code=302)

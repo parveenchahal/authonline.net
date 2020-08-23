@@ -1,4 +1,4 @@
-from cachetools import TTLCache, Cache
+'''from cachetools import TTLCache, Cache
 from storage import Storage
 from common.abstract_model import Model
 from .models import StorageEntryModel
@@ -24,4 +24,4 @@ class InMemoryDictStorage(Storage):
     def delete(self, key: str):
         self._dict.pop(key, None)
 
-    
+    '''

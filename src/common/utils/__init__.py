@@ -1,4 +1,5 @@
 import json
+import copy
 from base64 import b64encode, b64decode
 from typing import Any
 
@@ -34,6 +35,14 @@ def parse_json(json_string: str):
 def json_to_obj(cls, json_string: str) -> Any:
     j = parse_json(json_string)
     return cls(**j)
+
+def dict_to_obj(cls, d: dict) -> Any:
+    keys = list(cls.__dataclass_fields__)
+    new_dict = {}
+    for key in keys:
+        if key in d:
+            new_dict[key] = d[key]
+    return cls(**new_dict)
 
 def to_json_string(d: dict) -> str:
     return json.dumps(d)

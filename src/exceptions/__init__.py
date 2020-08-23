@@ -15,3 +15,9 @@ class SessionExpiredError(Exception):
 
 class JWTTokenInvalidSignatureError(Exception):
     pass
+
+class ShouldNotHaveReachedHere(Exception):
+    pass
+
+class AlreadyModified(Exception):
+    pass

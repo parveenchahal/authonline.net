@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class StorageEntryModel(Model):
-    key: str
+    id: str
     data: Model
+    partition_key: str
     etag: str = "*"

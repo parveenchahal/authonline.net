@@ -18,5 +18,5 @@ class UserInfoController(Controller):
     def get(self):
         cookie: str = request.cookies.get("session")
         session = Session(**(JWTHandler.decode_payload(cookie.split('.')[1])))
-        user_info = self._userinfo_handler.get(session.usr, session.sid)
+        user_info = self._userinfo_handler.get(session.oid, session.sid)
         return JSONResponse(user_info)

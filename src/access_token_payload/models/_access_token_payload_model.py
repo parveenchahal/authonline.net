@@ -9,11 +9,12 @@ class AccessTokenPayloadModel(Model):
     nbf: int = None
     exp: int = None
     jti: str = None
+    sid: str = None
     sub: str = None
     scp: str = None
     usr: str = None
     amr: list = None
-    remote_addr: str = None
+    ip_addr: str = None
 
     def to_dict(self):
         return super().to_dict(omit_none=True)
