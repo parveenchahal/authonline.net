@@ -16,17 +16,17 @@ class LoginController(Controller):
         resource = args.get("resource", None)
         if resource is None:
             raise exceptions.MissingParamError("resource is missing")
-        redirect_url = args.get("redirect_url", None)
-        if redirect_url is None:
-            raise exceptions.MissingParamError("redirect_url is missing")
+        redirect_uri = args.get("redirect_uri", None)
+        if redirect_uri is None:
+            raise exceptions.MissingParamError("redirect_uri is missing")
 
     def _update_page_with_values(self, page: str, args: dict):
         resource = args.get('resource')
         client_id = args.get('client_id')
-        redirect_url = args.get('redirect_url')
+        redirect_uri = args.get('redirect_uri')
         state = args.get('state', '')
         page = page.replace("$resource$", resource)
-        page = page.replace("$redirect_url$", redirect_url)
+        page = page.replace("$redirect_uri$", redirect_uri)
         page = page.replace("$state$", state)
         page = page.replace("$client_id$", client_id)
         return page
@@ -45,7 +45,7 @@ class LoginController(Controller):
                 return Response(data, mimetype='text/html')
         except exceptions.MissingParamError as e:
             self._logger.exception(e)
-            return http_responses.BadRequestResponse()
+            return http_responses.BadRequestResponse(str(e))
         except Exception as e:
             self._logger.exception(e)
             return http_responses.InternalServerErrorResponse()

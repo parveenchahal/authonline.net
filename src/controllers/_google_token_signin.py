@@ -51,7 +51,7 @@ class GoogleSignInController(Controller):
     def _validate_with_registered_details(self, data):
         client_id = data.get('client_id')
         resource = data.get('resource')
-        redirect_url = data.get('redirect_url')
+        redirect_uri = data.get('redirect_uri')
 
         registered_details = self._session_registration_handler.get(client_id)
 
@@ -61,8 +61,8 @@ class GoogleSignInController(Controller):
         if resource not in registered_details.resources:
             raise exceptions.IncorrectValue(f'Resource {resource} is not registered for given client_id.')
         
-        if not redirect_url.__eq__(registered_details.redirect_url):
-            raise exceptions.IncorrectValue(f'Redirect url {redirect_url} is not registered for given client_id.')
+        if not redirect_uri.__eq__(registered_details.redirect_uri):
+            raise exceptions.IncorrectValue(f'Redirect uri {redirect_uri} is not registered for given client_id.')
 
     def _auth(self, args: dict):
         self._validate_auth_request(args)
@@ -73,7 +73,7 @@ class GoogleSignInController(Controller):
         self._validate_with_registered_details(state)
 
         resource = state.get('resource')
-        redirect_url = state.get('redirect_url')
+        redirect_uri = state.get('redirect_uri')
         client_id = state.get('client_id')
 
         user_state_param = state.get('state')
@@ -88,7 +88,7 @@ class GoogleSignInController(Controller):
         self._userinfo_handler.fetch_and_store_from_google(user.object_id, session.sid, credentials['access_token'])
 
         signed_session = self._session_handler.sign(session)
-        return redirect(f'{redirect_url}?state={user_state_param}&session={signed_session}', code=302)
+        return redirect(f'{redirect_uri}?state={user_state_param}&session={signed_session}', code=302)
         
 
     def get(self, type: str = ""):
