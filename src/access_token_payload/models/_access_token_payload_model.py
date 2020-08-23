@@ -13,6 +13,7 @@ class AccessTokenPayloadModel(Model):
     sub: str = None
     scp: str = None
     usr: str = None
+    object_id: str = None
     amr: list = None
     ip_addr: str = None
 

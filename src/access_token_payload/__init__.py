@@ -14,6 +14,7 @@ def generate_access_token_payload_using_session(session: Session, client_ip: str
     access_token.usr = session.usr
     access_token.amr = session.amr
     access_token.ip_addr = client_ip
+    access_token.object_id = session.oid
 
     now_utc = int(datetime.utcnow().timestamp())
     exp = now_utc + int(expiry.total_seconds())
