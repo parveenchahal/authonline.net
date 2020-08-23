@@ -11,6 +11,7 @@ class Session(Model):
     sid: str
     amr: list
     oid: str
+    app: str
     usr: str
     res: str
     exp: int

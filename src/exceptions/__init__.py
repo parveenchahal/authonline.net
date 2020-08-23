@@ -21,3 +21,6 @@ class ShouldNotHaveReachedHere(Exception):
 
 class AlreadyModified(Exception):
     pass
+
+class IncorrectValue(Exception):
+    pass

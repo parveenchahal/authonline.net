@@ -10,20 +10,25 @@ import http_responses
 class LoginController(Controller):
 
     def _validate_query_params(self, args: dict):
+        client_id = args.get("client_id", None)
+        if client_id is None:
+            raise exceptions.MissingParamError("client_id is missing")
         resource = args.get("resource", None)
         if resource is None:
             raise exceptions.MissingParamError("resource is missing")
-        redirect_uri = args.get("redirect_uri", None)
-        if redirect_uri is None:
-            raise exceptions.MissingParamError("redirect_uri is missing")
+        redirect_url = args.get("redirect_url", None)
+        if redirect_url is None:
+            raise exceptions.MissingParamError("redirect_url is missing")
 
     def _update_page_with_values(self, page: str, args: dict):
         resource = args.get('resource')
-        redirect_uri = args.get('redirect_uri')
+        client_id = args.get('client_id')
+        redirect_url = args.get('redirect_url')
         state = args.get('state', '')
         page = page.replace("$resource$", resource)
-        page = page.replace("$redirect_uri$", redirect_uri)
+        page = page.replace("$redirect_url$", redirect_url)
         page = page.replace("$state$", state)
+        page = page.replace("$client_id$", client_id)
         return page
 
     def get(self):

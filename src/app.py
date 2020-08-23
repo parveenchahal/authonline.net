@@ -16,6 +16,7 @@ from crypto.jwt import JWTHandler
 import auth_filter
 from user_info import UserInfoHandler
 from user import UserHandler
+from registration import SessionRegistrationHandler
 
 config.init()
 
@@ -44,6 +45,7 @@ secret = KeyVaultSecret(config.common.KeyVaultName, config.common.CosmosDbConnec
 session_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'session', timedelta(hours=1), secret)
 user_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'user', timedelta(hours=1), secret)
 user_info_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'user_info', timedelta(hours=1), secret)
+registration_for_session_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'registration_for_session', timedelta(hours=1), secret)
 
 userinfo_handler = UserInfoHandler(logger, user_info_storage_container)
 user_handler = UserHandler(user_storage_container)
@@ -59,6 +61,11 @@ jwt_handler = JWTHandler(rsa_private_key_handler, rsa_public_key_handler)
 
 #============================== Create session handler =============================
 session_handler = SessionHandler(logger, session_storage_container, jwt_handler, refresh_session_interval=config.common.RefreshSessionAfterInterval)
+#===================================================================================
+
+
+#============================== Create registration handler ========================
+session_registration_handler = SessionRegistrationHandler(registration_for_session_storage_container)
 #===================================================================================
 
 
@@ -87,8 +94,8 @@ api.add_resource(UserInfoController, '/userinfo', endpoint="oauth2_userinfo", re
 
 #============================== Register GoogleSignIn controllers ===================
 google_oauth = GoogleOauth()
-api.add_resource(GoogleSignInController, '/googlesignin', endpoint="googlesignin", resource_class_args=(logger, google_oauth, session_handler, user_handler, userinfo_handler,))
-api.add_resource(GoogleSignInController, '/googlesignin/<type>', endpoint="googlesignin/type", resource_class_args=(logger, google_oauth, session_handler, user_handler, userinfo_handler))
+api.add_resource(GoogleSignInController, '/googlesignin', endpoint="googlesignin", resource_class_args=(logger, google_oauth, session_handler, user_handler, userinfo_handler, session_registration_handler,))
+api.add_resource(GoogleSignInController, '/googlesignin/<type>', endpoint="googlesignin/type", resource_class_args=(logger, google_oauth, session_handler, user_handler, userinfo_handler, session_registration_handler,))
 #====================================================================================
 
 

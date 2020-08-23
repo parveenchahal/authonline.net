@@ -21,7 +21,7 @@ class SessionHandler():
         self._jwt_handler = jwt_handler
 
 
-    def create(self, username: str, object_id:str, amr: list, resource:str, expiry: timedelta) -> Session:
+    def create(self, username: str, object_id:str, app_id:str, amr: list, resource:str, expiry: timedelta) -> Session:
         now_utc = datetime.utcnow()
         exp = int(datetime.timestamp(now_utc + expiry))
 
@@ -32,6 +32,7 @@ class SessionHandler():
             sid=sid,
             amr=amr,
             oid=object_id,
+            app=app_id,
             usr=username,
             res=resource,
             exp=exp,
