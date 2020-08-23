@@ -11,8 +11,8 @@ CosmosDbConnectionStrings = "pc-cosmos-db-connection-string"
 
 DatebaseName = "authonline"
 
-SessionExpiry: timedelta = timedelta(hours=1)
-RefreshSessionAfterInterval = timedelta(minutes=1)
+SessionExpiry: timedelta = timedelta(days=60)
+RefreshSessionAfterInterval = timedelta(minutes=2)
 
 def init():
     pass
