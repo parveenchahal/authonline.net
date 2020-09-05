@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
 import copy
 from datetime import datetime
 from common.abstract_model import Model
