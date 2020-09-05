@@ -10,10 +10,13 @@ class MissingParamError(Exception):
 class CannotBeCalledMoreThanOnceError(Exception):
     pass
 
-class SessionCookieNotFoundError(Exception):
+class SessionTokenNotFoundError(Exception):
     pass
 
 class SessionExpiredError(Exception):
+    pass
+
+class SessionRequiredRefreshError(Exception):
     pass
 
 class JWTTokenInvalidSignatureError(Exception):

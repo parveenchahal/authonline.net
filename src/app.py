@@ -3,7 +3,7 @@ import logging
 from flask import Flask
 from flask_restful import Api
 import config
-from controllers import LoginController, LogoutController, GoogleSignInController, PublicCertificatesController, AuthOnlineTokenController, UserInfoController
+from controllers import LoginController, LogoutController, GoogleSignInController, PublicCertificatesController, AuthOnlineTokenController, UserInfoController, RefreshSessionTokenController
 from google_oauth import GoogleOauth
 from storage.cosmos import create_cosmos_container_handler, create_database_container_if_not_exists
 from common.key_vault import KeyVaultSecret
@@ -73,8 +73,7 @@ session_registration_handler = SessionRegistrationHandler(registration_for_sessi
 
 
 #============================== Init Auth filter ===================================
-auth_filter.init_logger(logger)
-auth_filter.init_session_auth_filter(jwt_handler, session_handler)
+auth_filter.init_session_validator(logger, jwt_handler, session_handler)
 #===================================================================================
 
 
@@ -101,6 +100,7 @@ api.add_resource(GoogleSignInController, '/googlesignin', endpoint="googlesignin
 api.add_resource(GoogleSignInController, '/googlesignin/<type>', endpoint="googlesignin/type", resource_class_args=(logger, google_oauth, session_handler, user_handler, userinfo_handler, session_registration_handler,))
 #====================================================================================
 
+api.add_resource(RefreshSessionTokenController, '/session/refresh', endpoint="session_refresh", resource_class_args=(logger, session_handler,))
 
 api.add_resource(AuthOnlineTokenController, '/oauth2/token', endpoint="authonline_token", resource_class_args=(logger, jwt_handler,))
 

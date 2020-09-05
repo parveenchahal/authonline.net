@@ -19,8 +19,9 @@ class AuthOnlineTokenController(Controller):
 
     @auth_filter.validate_session
     def get(self):
-        cookie: str = request.cookies.get("session")
-        session = Session(**(JWTHandler.decode_payload(cookie.split('.')[1])))
+        session_token = request.headers['Authorization']
+        session_token = session_token.split(' ', 1)[1]
+        session = Session(**(JWTHandler.decode_payload(session_token.split('.')[1])))
         payload = _generate_access_token_payload_using_session(session)
         access_token = self._jwt_handler.encode(payload.to_dict())
         token_response = Oath2TokenResponse(**{
