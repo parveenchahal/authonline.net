@@ -11,7 +11,8 @@
             "module": "flask",
             "cwd": "${workspaceFolder}/src",
             "env": {
-                "FLASK_APP": "app.py",
+                "FLASK_APP": "session/app.py",
+                //"FLASK_APP": "oauth/app.py",
                 "FLASK_ENV": "development",
                 "FLASK_DEBUG": "0"
             },
