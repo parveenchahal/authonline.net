@@ -6,6 +6,8 @@ from flask_restful import request, url_for, ResponseBase as Response
 from .. import config
 from common import exceptions
 from common import http_responses
+import pathlib
+
 
 class LoginController(Controller):
 
@@ -38,7 +40,7 @@ class LoginController(Controller):
             resource = args.get("resource", None)
             if resource is None:
                 resource = config.common.BaseUrl
-            file_path = os.path.join(os.getcwd(), "statics/login.html")
+            file_path = os.path.join(pathlib.Path(__file__).parent.absolute(), "../statics/login.html")
             with open(file_path, 'r') as f:
                 data = f.read()
                 data = self._update_page_with_values(data, args)
