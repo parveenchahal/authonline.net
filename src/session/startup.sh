@@ -12,4 +12,6 @@ echo $data | base64 -d > /etc/secrets/google-oauth-secret
 export GOOGLE_OAUTH_SECRET_FILE_PATH="/etc/secrets/google-oauth-secret"
 
 export FLASK_APP=session.app.py
+export FLASK_ENV=production
+
 flask run -h 0.0.0.0 -p 5000

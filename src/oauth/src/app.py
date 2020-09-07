@@ -55,15 +55,12 @@ auth_filter.init_session_validator(logger, jwt_handler)
 #===================================================================================
 
 
-#============================== Register Public Certificate controllers =============
+#============================== Register Public Certificates controllers ============
 api.add_resource(PublicCertificatesController, '/oauth2/public_certificates', endpoint="oauth2_public_certificates", resource_class_args=(logger, signing_certificate_handler,))
 #====================================================================================
 
 
 api.add_resource(AuthOnlineTokenController, '/oauth2/token', endpoint="authonline_token", resource_class_args=(logger, jwt_handler,))
-
-
-
 
 
 if __name__ == '__main__':
