@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session
+  namespace: authonline
+spec:
+  selector:
+      matchLabels:
+        run: authonline-session
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: authonline-session
+    spec:
+      containers:
+      - name: authonline-session-1
+        image: pchahal24/authonline-session:latest
+        imagePullPolicy: Always
+        ports:
+          - name: port-5000
+            containerPort: 5000
+            protocol: TCP
+        resources:
+          limits:
+            cpu: 400m
+            memory: 512Mi
+          requests:
+            cpu: 300m
+            memory: 256Mi
+        env:
+        - name: AAD_IDENTITY_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: pc-identity
+              key: key
+        - name: AAD_IDENTITY_TENANT
+          valueFrom:
+            secretKeyRef:
+              name: pc-identity
+              key: tenant
+        - name: AAD_IDENTITY_CLIENTID
+          valueFrom:
+            secretKeyRef:
+              name: pc-identity
+              key: clientId

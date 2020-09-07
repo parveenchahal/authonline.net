@@ -1,0 +1,6 @@
+Flask
+Flask-RESTful
+requests
+oauth2client
+jwt
+azure-cosmos
