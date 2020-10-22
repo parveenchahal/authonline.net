@@ -6,4 +6,4 @@ class StorageEntryModel(Model):
     id: str
     data: Model
     partition_key: str
-    etag: str = "*"
+    etag: str = '*'

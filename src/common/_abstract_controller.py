@@ -13,7 +13,10 @@ class Controller(Resource):
         self.endpoint = self.endpoint
 
     def get(self):
-        pass
+        raise NotImplemented('GET is not supported.')
 
     def post(self):
-        pass
+        raise NotImplemented('POST is not supported.')
+
+    def delete(self):
+        raise NotImplemented('DELETE is not supported.')

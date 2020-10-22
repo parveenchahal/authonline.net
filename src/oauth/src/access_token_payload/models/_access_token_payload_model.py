@@ -15,7 +15,6 @@ class AccessTokenPayloadModel(Model):
     usr: str = None
     object_id: str = None
     amr: list = None
-    ip_addr: str = None
 
     def to_dict(self):
         return super().to_dict(omit_none=True)

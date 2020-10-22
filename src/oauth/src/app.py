@@ -40,6 +40,8 @@ signing_certificate_handler = CertificateFromKeyvault(secret, timedelta(hours=1)
 secret = KeyVaultSecret(config.common.KeyVaultName, config.common.CosmosDbConnectionStrings, key_vault_token)
 client_builder = CosmosClientBuilderFromKeyvaultSecret(secret)
 session_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'session', timedelta(hours=1), client_builder)
+oauth2_role_assignment_container = create_cosmos_container_handler(config.common.DatebaseName, 'oauth2_role_assignment', timedelta(hours=1), client_builder)
+oauth2_registration_container = create_cosmos_container_handler(config.common.DatebaseName, 'registration_for_oauth2', timedelta(hours=1), client_builder)
 #===================================================================================
 
 
