@@ -6,7 +6,7 @@ from common.crypto.jwt import JWTHandler
 from common.session.models import Session
 from ..access_token_payload import generate_access_token_payload_using_session as _generate_access_token_payload_using_session
 from common import auth_filter
-from common.utils import to_json_string
+from common.utils import dict_to_obj, to_json_string
 from common import http_responses
 from common.http_responses.models import Oath2TokenResponse
 from .. import config
@@ -28,14 +28,14 @@ class AuthOnlineTokenController(Controller):
 
     @auth_filter.validate_session
     def get(self):
-        session_token = request.headers['Authorization']
+        session_token = request.headers['Session']
         session_token = session_token.split(' ', 1)[1]
         session = Session(**(JWTHandler.decode_payload(session_token.split('.')[1])))
-        storage_entry = self._role_assignment_storage.get(session.oid, session.app, RoleAssignmentModel)
-        role_assignment = RoleAssignmentModel(storage_entry.data)
+        storage_entry = self._role_assignment_storage.get(session.oid, session.app)
+        role_assignment = dict_to_obj(RoleAssignmentModel, storage_entry.data)
 
-        storage_entry = self._oauth2_registration_storage.get(session.app, 0, Oauth2RegistrationModel)
-        oauth2_registration: Oauth2RegistrationModel = storage_entry.data
+        storage_entry = self._oauth2_registration_storage.get(session.app, 0)
+        oauth2_registration = dict_to_obj(Oauth2RegistrationModel, storage_entry.data)
         scp = oauth2_registration.roles.get(role_assignment.role_name, role_assignment.role_name)
 
         payload = _generate_access_token_payload_using_session(session, config.common.BaseUrl, scp)

@@ -1,4 +1,5 @@
 from common.storage import Storage
+from common.utils import dict_to_obj
 from .models import SessionRegistrationDetailsModel
 
 class SessionRegistrationHandler(object):
@@ -9,7 +10,7 @@ class SessionRegistrationHandler(object):
         self._storage = storage
 
     def get(self, client_id: str) -> SessionRegistrationDetailsModel:
-        storage_entry = self._storage.get(client_id, 0, SessionRegistrationDetailsModel)
+        storage_entry = self._storage.get(client_id, 0)
         if storage_entry is not None:
-            return storage_entry.data
+            return dict_to_obj(SessionRegistrationDetailsModel, storage_entry.data)
         return None

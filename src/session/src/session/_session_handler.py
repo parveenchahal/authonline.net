@@ -6,6 +6,7 @@ from common.storage import Storage
 from common.crypto.jwt import JWTHandler
 from common.storage.models import StorageEntryModel
 from common import exceptions
+from common.utils import dict_to_obj
 
 class SessionHandler():
 
@@ -43,7 +44,7 @@ class SessionHandler():
         storage_entry = StorageEntryModel(**{
             'id': sid,
             'partition_key': object_id,
-            'data': session
+            'data': session.to_dict()
         })
         self._storage.add_or_update(storage_entry)
         return session
@@ -52,10 +53,10 @@ class SessionHandler():
         #
         #TODO: Need to refactor
         #
-        storage_entry = self._storage.get(session.sid, session.oid, Session)
+        storage_entry = self._storage.get(session.sid, session.oid)
         if storage_entry is None:
             return None
-        s: Session = storage_entry.data
+        s = dict_to_obj(Session, storage_entry.data)
         if s.is_expired:
             return None
         if s.sqn - session.sqn > 1:
@@ -65,22 +66,22 @@ class SessionHandler():
             return s
         s.sqn = s.sqn + 1
         s.raf = int(datetime.timestamp(datetime.utcnow() + self._refresh_session_interval))
-        storage_entry.data = s
+        storage_entry.data = s.to_dict()
         try:
             self._storage.add_or_update(storage_entry)
         except exceptions.EtagMismatchError:
-            storage_entry = self._storage.get(session.sid, session.oid, Session)
+            storage_entry = self._storage.get(session.sid, session.oid)
             if storage_entry is None:
                 return None
-            s: Session = storage_entry.data
+            s = dict_to_obj(Session, storage_entry.data)
             if s.is_expired:
                 return None
         return s
 
     def get(self, object_id: str, session_id: str) -> Session:
-        data = self._storage.get(session_id, object_id, Session)
+        data = self._storage.get(session_id, object_id)
         if data is not None:
-            s = Session(**(data.data))
+            s = dict_to_obj(Session, data.data)
             if not s.is_expired:
                 return s
         return None
@@ -90,10 +91,11 @@ class SessionHandler():
         return signed_session
 
     def expires(self, object_id: str, session_id: str):
-        storage_entry = self._storage.get(session_id, object_id, Session)
+        storage_entry = self._storage.get(session_id, object_id)
         if storage_entry is None:
             return
-        s: Session = storage_entry.data
+        s = dict_to_obj(Session, storage_entry.data)
         s.exp = int(datetime.utcnow().timestamp())
+        storage_entry.data = s.to_dict()
         storage_entry.etag = '*'
         return self._storage.add_or_update(storage_entry)

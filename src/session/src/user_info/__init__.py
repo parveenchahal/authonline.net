@@ -1,7 +1,7 @@
 from common.storage import Storage
 from .models import UserInfoModel
 from requests import request as http_request 
-from common.utils import parse_json
+from common.utils import dict_to_obj, parse_json
 from common.storage.models import StorageEntryModel
 from logging import Logger
 
@@ -16,8 +16,8 @@ class UserInfoHandler(object):
         self._storage = storage
 
     def get(self, object_id: str, session_id: str) -> UserInfoModel:
-        storage_entry = self._storage.get(session_id, object_id, UserInfoModel)
-        return storage_entry.data
+        storage_entry = self._storage.get(session_id, object_id)
+        return dict_to_obj(UserInfoModel, storage_entry.data)
 
     def fetch_and_store_from_google(self, object_id: str, session_id: str, access_token: str):
         res = http_request('GET', self._google_userinfo_endpoint, headers={"Authorization": f'Bearer {access_token}'})
@@ -37,7 +37,7 @@ class UserInfoHandler(object):
         storage_entry = StorageEntryModel(**{
             'id': session_id,
             'partition_key': object_id,
-            'data': user_info,
+            'data': user_info.to_dict(),
             'etag': '*'
         })
 

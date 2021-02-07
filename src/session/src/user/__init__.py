@@ -1,4 +1,5 @@
 from common.storage import Storage
+from common.utils import dict_to_obj
 from .models import UserModel
 import uuid
 from datetime import datetime
@@ -19,20 +20,25 @@ class UserHandler(object):
             'object_id': object_id,
             'auth_method': auth_method,
         })
-        storage_entry: StorageEntryModel = StorageEntryModel(**{
+        storage_entry = StorageEntryModel(**{
             'id': username,
             'partition_key': 0,
-            'data': user,
+            'data': user.to_dict(),
             'etag': "*"
         })
         self._storage.add_or_update(storage_entry)
 
     def get_or_create(self, username: str, auth_method: str) -> UserModel:
         user = None
-        user: StorageEntryModel = self._storage.get(username, 0, UserModel)
+        user = self._storage.get(username, 0)
         if user is not None:
-            return user.data
+            return dict_to_obj(UserModel, user.data)
         self._create(username, auth_method)
-        user = self._storage.get(username, 0, UserModel).data
+        user = self._storage.get(username, 0)
+        if user is None:
+            # TODO: raise exception
+            pass
+        data = user.data
+        user = dict_to_obj(UserModel, data)
         return user
         
