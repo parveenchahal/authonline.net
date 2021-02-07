@@ -16,8 +16,7 @@ class UserInfoController(Controller):
 
     @auth_filter.validate_session
     def get(self):
-        session_token = request.headers['Authorization']
-        session_token = session_token.split(' ', 1)[1]
+        session_token = request.headers['Session']
         session = Session(**(JWTHandler.decode_payload(session_token.split('.')[1])))
         user_info = self._userinfo_handler.get(session.oid, session.sid)
         return JSONResponse(user_info)

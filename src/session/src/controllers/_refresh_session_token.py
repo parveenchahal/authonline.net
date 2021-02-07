@@ -17,8 +17,7 @@ class RefreshSessionTokenController(Controller):
 
     @auth_filter.validate_session(ignore_refresh_expiry=True)
     def get(self):
-        session_token = request.headers['Authorization']
-        session_token = session_token.split(' ', 1)[1]
+        session_token = request.headers['Session']
         session = Session(**(JWTHandler.decode_payload(session_token.split('.')[1])))
         session = self._session_handler.refresh(session)
         if session is None:

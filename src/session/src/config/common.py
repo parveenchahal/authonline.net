@@ -1,7 +1,7 @@
 import os
 from datetime import timedelta
 
-BaseUrl = "https://authonline.net/"
+BaseUrl = "https://authonline.pchahal.com/"
 
 KeyVaultName = "pckv1"
 
