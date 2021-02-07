@@ -84,7 +84,7 @@ class GoogleSignInController(Controller):
         user = self._user_handler.get_or_create(username, 'GoogleSignIn')
 
         session = self._session_handler.create(username, user.object_id, client_id, ["GoogleSignIn",], resource, config.common.SessionExpiry)
-        self._userinfo_handler.fetch_and_store_from_google(user.object_id, session.sid, credentials['access_token'])
+        self._userinfo_handler.fetch_and_store_from_google(user.object_id, credentials['access_token'])
 
         signed_session = self._session_handler.sign(session)
         return redirect(f'{redirect_uri}?state={user_state_param}&session={signed_session}', code=302)

@@ -16,10 +16,10 @@ class UserInfoHandler(object):
         self._storage = storage
 
     def get(self, object_id: str, session_id: str) -> UserInfoModel:
-        storage_entry = self._storage.get(session_id, object_id)
+        storage_entry = self._storage.get(object_id, 0)
         return dict_to_obj(UserInfoModel, storage_entry.data)
 
-    def fetch_and_store_from_google(self, object_id: str, session_id: str, access_token: str):
+    def fetch_and_store_from_google(self, object_id: str, access_token: str):
         res = http_request('GET', self._google_userinfo_endpoint, headers={"Authorization": f'Bearer {access_token}'})
         info_dict = parse_json(res.text)
 
@@ -35,8 +35,8 @@ class UserInfoHandler(object):
         })
 
         storage_entry = StorageEntryModel(**{
-            'id': session_id,
-            'partition_key': object_id,
+            'id': object_id,
+            'partition_key': 0,
             'data': user_info.to_dict(),
             'etag': '*'
         })

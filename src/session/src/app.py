@@ -44,10 +44,10 @@ signing_certificate_handler = CertificateFromKeyvault(secret, timedelta(hours=1)
 #============================== Create Storage handlers ============================
 secret = KeyVaultSecret(config.common.KeyVaultName, config.common.CosmosDbConnectionStrings, key_vault_token)
 client_builder = CosmosClientBuilderFromKeyvaultSecret(secret)
-create_database_container_if_not_exists(client_builder, config.common.DatebaseName, ('user', 'session', 'user_info', 'registration_for_session'), config.common.CosmosOfferThroughput)
+create_database_container_if_not_exists(client_builder, config.common.DatebaseName, ('user_principal', 'session', 'user_principal_info', 'registration_for_session'), config.common.CosmosOfferThroughput)
 session_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'session', timedelta(hours=1), client_builder)
-user_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'user', timedelta(hours=1), client_builder)
-user_info_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'user_info', timedelta(hours=1), client_builder)
+user_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'user_principal', timedelta(hours=1), client_builder)
+user_info_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'user_principal_info', timedelta(hours=1), client_builder)
 registration_for_session_storage_container = create_cosmos_container_handler(config.common.DatebaseName, 'registration_for_session', timedelta(hours=1), client_builder)
 
 userinfo_handler = UserInfoHandler(logger, user_info_storage_container)
