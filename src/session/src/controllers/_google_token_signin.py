@@ -60,7 +60,7 @@ class GoogleSignInController(Controller):
         if resource not in registered_details.resources:
             raise exceptions.IncorrectValue(f'Resource {resource} is not registered for given client_id.')
         
-        if not redirect_uri.__eq__(registered_details.redirect_uri):
+        if not redirect_uri in registered_details.redirect_uris:
             raise exceptions.IncorrectValue(f'Redirect uri {redirect_uri} is not registered for given client_id.')
 
     def _auth(self, args: dict):

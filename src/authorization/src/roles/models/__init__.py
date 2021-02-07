@@ -1,1 +1,0 @@
-from ._role_assignment_model import RoleAssignmentModel

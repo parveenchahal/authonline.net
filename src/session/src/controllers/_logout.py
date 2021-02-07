@@ -18,7 +18,7 @@ class LogoutController(Controller):
 
     @auth_filter.validate_session
     def get(self):
-        session_token = request.headers['Authorization']
+        session_token = request.headers['Session']
         session_token = session_token.split(' ', 1)[1]
         session = Session(**(JWTHandler.decode_payload(session_token.split('.')[1])))
         self._session_handler.expires(session.oid, session.sid)

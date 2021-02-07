@@ -1,1 +1,0 @@
-from ._oauth2_registration_model import Oauth2RegistrationModel

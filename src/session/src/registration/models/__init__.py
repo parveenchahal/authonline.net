@@ -6,6 +6,6 @@ from typing import List
 class SessionRegistrationDetailsModel(Model):
     object_id: str
     client_id: str
-    redirect_uri: str
+    redirect_uris: List[str]
     resources: List[str]
     
