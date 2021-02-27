@@ -1,7 +1,7 @@
 import os
 from datetime import timedelta
 
-BaseUrl = "https://authonline.pchahal.com/"
+BaseUrl = "https://authonline.net/"
 
 KeyVaultName = "pckv1"
 
@@ -14,7 +14,7 @@ CosmosOfferThroughput = 400
 DatebaseName = "authonline"
 
 SessionExpiry: timedelta = timedelta(days=60)
-RefreshSessionAfterInterval = timedelta(minutes=2)
+RefreshSessionAfterInterval = timedelta(minutes=5)
 
 def init():
     pass
