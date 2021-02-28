@@ -24,10 +24,10 @@ spec:
         resources:
           limits:
             cpu: 100m
-            memory: 128Mi
+            memory: 200Mi
           requests:
             cpu: 50m
-            memory: 64Mi
+            memory: 100Mi
         env:
         - name: AAD_IDENTITY_SECRET
           valueFrom:
