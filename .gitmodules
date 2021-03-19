@@ -1,3 +1,0 @@
-[submodule "backend/src/common"]
-	path = backend/src/common
-	url = git@github.com:parveenchahal/python-common.git
