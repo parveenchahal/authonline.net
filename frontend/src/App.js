@@ -4,16 +4,15 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
 
 function App() {
-  let args = {q: location.search}
+  let qs = {qs: window.location.search}
   return (
     <Router>
       <Switch>
         <Route exact path="/login">
-          <Login {...args}></Login>
+          <Login {...qs}></Login>
         </Route>
       </Switch>
     </Router>

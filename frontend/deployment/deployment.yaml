@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: authonline
+spec:
+  selector:
+      matchLabels:
+        run: frontend-authonline
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: frontend-authonline
+    spec:
+      containers:
+      - name: frontend-authonline-1
+        image: pchahal24/authonline-frontend:latest
+        imagePullPolicy: Always
+        ports:
+          - name: port-5000
+            containerPort: 5000
+            protocol: TCP
+        resources:
+          limits:
+            cpu: 40m
+            memory: 70Mi
+          requests:
+            cpu: 20m
+            memory: 30Mi

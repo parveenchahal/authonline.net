@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 
 export default class Login extends Component {
     render() {
-        let q = this.props.q
+        let qs = this.props.qs
         return (
             <div>
                 <div className="container-login100">
@@ -11,7 +11,7 @@ export default class Login extends Component {
                         <form className="login100-form">
                             <span className="login100-form-title p-b-53">Sign In With</span>
                             <span>
-                            <a href={"/googlesignin" + q} className="btn-google">
+                            <a href={"/googlesignin" + qs} className="btn-google">
                                 <img src="images/icon-google.png" alt="GOOGLE" />
                                 Google
                             </a>

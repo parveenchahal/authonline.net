@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-authonline-service
+  namespace: authonline
+  labels:
+    app: frontend-authonline
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    name: port-5000
+    targetPort: 5000
+  selector:
+    run: frontend-authonline
+  type: ClusterIP
