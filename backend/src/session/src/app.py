@@ -18,11 +18,15 @@ from .user_info import UserInfoHandler
 from .user import UserHandler
 from .registration import SessionRegistrationHandler
 from common.storage.cosmos import CosmosClientBuilderFromKeyvaultSecret
+from common.cache.redis import RedisCache
+from redis import Redis
 
 config.init()
 
 app = Flask(__name__)
 api = Api(app)
+
+redis_client = Redis(host='redis-service.default')
 
 logger = logging.getLogger('werkzeug')
 #logger.setLevel(logging.ERROR)
@@ -37,7 +41,7 @@ key_vault_token = AADToken(AAD_IDENTITY_CLIENTID, AAD_IDENTITY_SECRET, 'https://
 
 #============================== Create Signing Certificate Handler =================
 secret = KeyVaultSecret(config.common.KeyVaultName, config.common.SigningCertificateName, key_vault_token)
-signing_certificate_handler = CertificateFromKeyvault(secret, timedelta(hours=1))
+signing_certificate_handler = CertificateFromKeyvault(secret, RedisCache(redis_client, timedelta(hours=1), namespace="public_certificate"))
 #===================================================================================
 
 
