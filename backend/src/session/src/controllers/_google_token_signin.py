@@ -1,17 +1,15 @@
-from . import Controller
-from .. import config
+from logging import Logger
 from flask import redirect
 from flask_restful import request
-from logging import Logger
-from ..google_oauth import GoogleOauth
 from common import http_responses, exceptions
-from ..session import SessionHandler
-from urllib.parse import urlparse, ParseResult
 from common.utils import parse_json, to_json_string
+from . import Controller
+from .. import config
+from ..google_oauth import GoogleOauth
+from ..session import SessionHandler
 from ..user_info import UserInfoHandler
 from ..user import UserHandler
 from ..registration import SessionRegistrationHandler
-from ..registration.models import SessionRegistrationDetailsModel
 
 
 class GoogleSignInController(Controller):
@@ -58,10 +56,12 @@ class GoogleSignInController(Controller):
             raise exceptions.IncorrectValue(f'Client id {client_id} not found.')
 
         if resource not in registered_details.resources:
-            raise exceptions.IncorrectValue(f'Resource {resource} is not registered for given client_id.')
+            raise exceptions.IncorrectValue(
+                f'Resource {resource} is not registered for given client_id.')
         
         if not redirect_uri in registered_details.redirect_uris:
-            raise exceptions.IncorrectValue(f'Redirect uri {redirect_uri} is not registered for given client_id.')
+            raise exceptions.IncorrectValue(
+                f'Redirect uri {redirect_uri} is not registered for given client_id.')
 
     def _auth(self, args: dict):
         self._validate_auth_request(args)

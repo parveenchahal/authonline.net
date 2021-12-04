@@ -16,7 +16,7 @@ from common.storage.cosmos import CosmosClientBuilderFromKeyvaultSecret
 from common.storage.cosmos import create_cosmos_container_handler, \
                                 create_database_container_if_not_exists
 from . import config
-from .controllers import LoginController, LogoutController, GoogleSignInController, \
+from .controllers import LogoutController, GoogleSignInController, \
                         PublicCertificatesController, UserInfoController, \
                         RefreshSessionTokenController
 from .google_oauth import GoogleOauth
@@ -124,7 +124,6 @@ auth_filter.init_session_validator(logger, jwt_handler)
 
 
 #============================== Register login/logout controllers =========================
-api.add_resource(LoginController, '/login', endpoint="login", resource_class_args=(logger,))
 api.add_resource(
     LogoutController, '/logout', endpoint="logout", resource_class_args=(logger, session_handler,))
 #===================================================================================

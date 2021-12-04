@@ -20,7 +20,10 @@ class UserInfoHandler(object):
         return dict_to_obj(UserInfoModel, storage_entry.data)
 
     def fetch_and_store_from_google(self, object_id: str, access_token: str):
-        res = http_request('GET', self._google_userinfo_endpoint, headers={"Authorization": f'Bearer {access_token}'})
+        res = http_request(
+            'GET',
+            self._google_userinfo_endpoint,
+            headers={"Authorization": f'Bearer {access_token}'})
         info_dict = parse_json(res.text)
 
         user_info = UserInfoModel(**{

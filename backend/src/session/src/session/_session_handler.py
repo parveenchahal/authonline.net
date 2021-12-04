@@ -16,14 +16,26 @@ class SessionHandler():
     _jwt_handler: JWTHandler
     _force_refresh_before_raf_expiry: timedelta = timedelta(minutes=1)
 
-    def __init__(self, logger: Logger, storage: Storage, jwt_handler: JWTHandler, refresh_session_interval: timedelta = timedelta(minutes=5)):
+    def __init__(
+        self,
+        logger: Logger,
+        storage: Storage,
+        jwt_handler: JWTHandler,
+        refresh_session_interval: timedelta = timedelta(minutes=5)):
         self._logger = logger
         self._storage = storage
         self._refresh_session_interval = refresh_session_interval
         self._jwt_handler = jwt_handler
 
 
-    def create(self, username: str, object_id:str, app_id:str, amr: list, resource:str, expiry: timedelta) -> Session:
+    def create(
+        self,
+        username: str,
+        object_id:str,
+        app_id:str,
+        amr: list,
+        resource:str,
+        expiry: timedelta) -> Session:
         now_utc = datetime.utcnow()
         exp = int(datetime.timestamp(now_utc + expiry))
 
@@ -62,7 +74,8 @@ class SessionHandler():
         if s.sqn - session.sqn > 1:
             self.expires(s.oid, s.sid)
             return None
-        if not s.refresh_required and datetime.fromtimestamp(s.raf) - datetime.utcnow() > self._force_refresh_before_raf_expiry:
+        if not s.refresh_required and \
+            datetime.fromtimestamp(s.raf) - datetime.utcnow() > self._force_refresh_before_raf_expiry:
             return s
         s.sqn = s.sqn + 1
         s.raf = int(datetime.timestamp(datetime.utcnow() + self._refresh_session_interval))
