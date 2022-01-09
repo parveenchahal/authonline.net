@@ -4,3 +4,4 @@ from ._public_certificates import PublicCertificatesController
 from ._logout import LogoutController
 from ._user_info import UserInfoController
 from ._refresh_session_token import RefreshSessionTokenController
+from ._registration import SessionRegistrationController

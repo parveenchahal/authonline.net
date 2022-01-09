@@ -18,7 +18,7 @@ from common.storage.cosmos import create_cosmos_container_handler, \
 from . import config
 from .controllers import LogoutController, GoogleSignInController, \
                         PublicCertificatesController, UserInfoController, \
-                        RefreshSessionTokenController
+                        RefreshSessionTokenController, SessionRegistrationController
 from .google_oauth import GoogleOauth
 from .session import SessionHandler
 from .user_info import UserInfoHandler
@@ -123,13 +123,13 @@ auth_filter.init_session_validator(logger, jwt_handler)
 #===================================================================================
 
 
-#============================== Register login/logout controllers =========================
+#============================== Register login/logout controller =========================
 api.add_resource(
     LogoutController, '/logout', endpoint="logout", resource_class_args=(logger, session_handler,))
 #===================================================================================
 
 
-#============================== Register Public Certificate controllers =============
+#============================== Register Public Certificate controller =============
 api.add_resource(
     PublicCertificatesController,
     '/session/public_certificates',
@@ -137,8 +137,15 @@ api.add_resource(
     resource_class_args=(logger, signing_certificate_handler,))
 #====================================================================================
 
+#============================== Session Registration controller =============
+api.add_resource(
+    SessionRegistrationController,
+    '/session/registration',
+    endpoint="session_registration",
+    resource_class_args=(logger, session_registration_handler,))
+#====================================================================================
 
-#============================== Register Userinfo controllers =======================
+#============================== Register Userinfo controller =======================
 api.add_resource(
     UserInfoController,
     '/userinfo',
