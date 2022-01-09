@@ -3,6 +3,7 @@ from flask import redirect
 from flask_restful import request
 from common import http_responses, exceptions
 from common.utils import parse_json, to_json_string
+from session.src.registration.models import SessionRegistrationDetailsModel
 from . import Controller
 from .. import config
 from ..google_oauth import GoogleOauth
@@ -14,6 +15,7 @@ from ..registration import SessionRegistrationHandler
 
 class GoogleSignInController(Controller):
 
+    AUTH_METHOD: str = 'GoogleSignIn'
     _google_oauth: GoogleOauth
     _session_handler: SessionHandler
     _userinfo_handler: UserInfoHandler
@@ -45,50 +47,40 @@ class GoogleSignInController(Controller):
         if state is None:
             raise exceptions.MissingParamError("state is missing")
 
-    def _validate_with_registered_details(self, data):
-        client_id = data.get('client_id')
-        resource = data.get('resource')
+    def _validate_with_registered_details(self, data: dict, registered_details: SessionRegistrationDetailsModel):
         redirect_uri = data.get('redirect_uri')
-
-        registered_details = self._session_registration_handler.get(client_id)
-
-        if registered_details is None:
-            raise exceptions.IncorrectValue(f'Client id {client_id} not found.')
-
-        if resource not in registered_details.resources:
-            raise exceptions.IncorrectValue(
-                f'Resource {resource} is not registered for given client_id.')
-        
         if not redirect_uri in registered_details.redirect_uris:
             raise exceptions.IncorrectValue(
                 f'Redirect uri {redirect_uri} is not registered for given client_id.')
 
     def _auth(self, args: dict):
         self._validate_auth_request(args)
-        code = args.get("code")
-        scopes = args.get("scope")
-        state = parse_json(args.get("state"))
 
-        self._validate_with_registered_details(state)
-
-        resource = state.get('resource')
-        redirect_uri = state.get('redirect_uri')
+        state: dict = parse_json(args.get("state"))
         client_id = state.get('client_id')
 
-        user_state_param = state.get('state')
+        registered_details = self._session_registration_handler.get(client_id)
+        if registered_details is None:
+            raise exceptions.IncorrectValue(f'Client id {client_id} not found.')
 
+        self._validate_with_registered_details(state, registered_details)
+
+        code = args.get("code")
+        scopes = args.get("scope")
         credentials = self._google_oauth.get_token_using_authorization_code(code, scopes, config.google_token_signin.RedirectUri)
 
         username = credentials['username']
 
-        user = self._user_handler.get_or_create(username, 'GoogleSignIn')
-
-        session = self._session_handler.create(username, user.object_id, client_id, ["GoogleSignIn",], resource, config.common.SessionExpiry)
+        user = self._user_handler.get_or_create(username, self.AUTH_METHOD)
         self._userinfo_handler.fetch_and_store_from_google(user.object_id, credentials['access_token'])
 
+        session = self._session_handler.create(username, user.object_id, client_id, ["GoogleSignIn",], registered_details.resource, config.common.SessionExpiry)
+
         signed_session = self._session_handler.sign(session)
+        redirect_uri = state.get('redirect_uri')
+        user_state_param = state.get('state')
         return redirect(f'{redirect_uri}?state={user_state_param}&session={signed_session}', code=302)
-        
+
 
     def get(self, type: str = ""):
         try:
