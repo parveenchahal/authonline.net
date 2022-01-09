@@ -3,7 +3,7 @@ from flask import redirect
 from flask_restful import request
 from common import http_responses, exceptions
 from common.utils import parse_json, to_json_string
-from session.src.registration.models import SessionRegistrationDetailsModel
+from ..registration.models import SessionRegistrationDetailsModel
 from . import Controller
 from .. import config
 from ..google_oauth import GoogleOauth

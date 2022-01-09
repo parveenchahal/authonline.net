@@ -4,7 +4,7 @@ from common import Controller, http_responses, exceptions
 from common import auth_filter
 from common.session.models import Session
 from common.crypto.jwt import JWTHandler
-from session.src import config
+from .. import config
 from ..registration import SessionRegistrationHandler
 
 class SessionRegistrationController(Controller):
