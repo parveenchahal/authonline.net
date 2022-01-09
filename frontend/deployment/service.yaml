@@ -9,8 +9,8 @@ spec:
   ports:
   - port: 80
     protocol: TCP
-    name: port-5000
-    targetPort: 5000
+    name: port-3000
+    targetPort: 3000
   selector:
     run: frontend-authonline
   type: ClusterIP
