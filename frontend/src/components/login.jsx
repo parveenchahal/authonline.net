@@ -11,7 +11,7 @@ export default class Login extends Component {
                         <form className="login100-form">
                             <span className="login100-form-title p-b-53">Sign In With</span>
                             <span>
-                            <a href={"/googlesignin" + qs} className="btn-google">
+                            <a href={"https://apis.authonline.net/googlesignin" + qs} className="btn-google">
                                 <img src="images/icon-google.png" alt="GOOGLE" />
                                 Google
                             </a>
