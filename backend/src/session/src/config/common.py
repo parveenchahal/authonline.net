@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-BaseUrl = 'https://authonline.net/'
+BaseUrl = 'https://apis.authonline.net/'
 
 AuthonlineClientId = '10a06848-a289-4c83-9ada-0532ce67473b'
 
