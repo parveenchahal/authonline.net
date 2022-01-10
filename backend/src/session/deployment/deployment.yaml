@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: authonline-session-1
-        image: pchahal24/authonline-session:2022-01-10
+        image: pchahal24/authonline-session:2022-01-11
         imagePullPolicy: Always
         ports:
           - name: port-5000
