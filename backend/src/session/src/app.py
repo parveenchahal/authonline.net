@@ -6,13 +6,13 @@ from flask_restful import Api
 from redis import Redis
 
 from common import AADToken
-from common import auth_filter
 from common.cache.redis import RedisCache
 from common.crypto import CertificateFromKeyvault
-from common.crypto.jwt import RSAPrivateKeyHandler, RSAPublicKeyHandler
+from common.crypto.rsa import RSAPrivateKeyHandler, RSAPublicKeyHandler
 from common.crypto.jwt import JWTHandler
 from common.key_vault import KeyVaultSecret
 from common.storage.cosmos import CosmosClientBuilderFromKeyvaultSecret
+from .session import init_session_validator
 from common.storage.cosmos import create_cosmos_container_handler, \
                                 create_database_container_if_not_exists
 from . import config
@@ -119,7 +119,7 @@ session_registration_handler = SessionRegistrationHandler(
 
 
 #============================== Init Auth filter ===================================
-auth_filter.init_session_validator(logger, jwt_handler)
+init_session_validator(logger, jwt_handler)
 #===================================================================================
 
 

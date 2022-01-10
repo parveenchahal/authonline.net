@@ -1,11 +1,10 @@
 from flask_restful import request
-from ..session import SessionHandler
 from common.session.models import Session
 from common.crypto.jwt import JWTHandler
 from common import Controller
-from common import auth_filter
 from common import http_responses
 from common.http_responses.models import SessionTokenResponse
+from ..session import SessionHandler, validate_session
 
 class RefreshSessionTokenController(Controller):
 
@@ -15,7 +14,7 @@ class RefreshSessionTokenController(Controller):
         super().__init__(logger)
         self._session_handler = session_handler
 
-    @auth_filter.validate_session(ignore_refresh_expiry=True)
+    @validate_session(ignore_refresh_expiry=True)
     def get(self):
         session_token = request.headers['Session']
         session = Session(**(JWTHandler.decode_payload(session_token.split('.')[1])))
