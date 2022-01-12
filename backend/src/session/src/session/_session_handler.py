@@ -26,6 +26,8 @@ class SessionHandler():
         self._storage = storage
         self._refresh_session_interval = refresh_session_interval
         self._jwt_handler = jwt_handler
+        if refresh_session_interval <= self._force_refresh_before_raf_expiry:
+            raise ValueError('refresh_session_interval should be greater than 2 minutes.')
 
     def create(
         self,
