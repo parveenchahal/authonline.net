@@ -14,7 +14,7 @@ class SessionHandler():
     _storage: Storage
     _refresh_session_interval: timedelta
     _jwt_handler: JWTHandler
-    _force_refresh_before_raf_expiry: timedelta = timedelta(minutes=1)
+    _force_refresh_before_raf_expiry: timedelta = timedelta(minutes=2)
 
     def __init__(
         self,
@@ -26,7 +26,6 @@ class SessionHandler():
         self._storage = storage
         self._refresh_session_interval = refresh_session_interval
         self._jwt_handler = jwt_handler
-
 
     def create(
         self,
