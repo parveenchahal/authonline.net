@@ -125,7 +125,7 @@ init_session_validator(logger, jwt_handler)
 
 #============================== Register login/logout controller =========================
 api.add_resource(
-    LogoutController, '/logout', endpoint="logout", resource_class_args=(logger, session_handler,))
+    LogoutController, '/session/logout', endpoint="logout", resource_class_args=(logger, session_handler,))
 #===================================================================================
 
 
@@ -148,7 +148,7 @@ api.add_resource(
 #============================== Register Userinfo controller =======================
 api.add_resource(
     UserInfoController,
-    '/userinfo',
+    '/session/userinfo',
     endpoint="oauth2_userinfo",
     resource_class_args=(logger, userinfo_handler,))
 #====================================================================================
@@ -167,7 +167,7 @@ api.add_resource(
 google_oauth = GoogleOauth()
 api.add_resource(
     GoogleSignInController,
-    '/googlesignin',
+    '/session/googlesignin',
     endpoint="googlesignin",
     resource_class_args=(
         logger,
@@ -177,7 +177,7 @@ api.add_resource(
         userinfo_handler,
         session_registration_handler,))
 api.add_resource(
-    GoogleSignInController,'/googlesignin/<type>',
+    GoogleSignInController,'/session/googlesignin/<type>',
     endpoint="googlesignin/type",
     resource_class_args=(
         logger,
