@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend-authonline-1
-        image: pchahal24/authonline-frontend:2022-01-10
+        image: pchahal24/authonline-frontend:2022-01-12
         imagePullPolicy: Always
         ports:
           - name: port-5000
