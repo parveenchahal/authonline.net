@@ -125,7 +125,7 @@ init_session_validator(logger, jwt_handler)
 
 #============================== Register login/logout controller =========================
 api.add_resource(
-    LogoutController, '/session/logout', endpoint="logout", resource_class_args=(logger, session_handler,))
+    LogoutController, '/logout', endpoint="logout", resource_class_args=(logger, session_handler,))
 #===================================================================================
 
 
