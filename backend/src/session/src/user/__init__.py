@@ -1,17 +1,17 @@
-from common.storage import Storage
+from common.databases.nosql import DatabaseOperations
 from common.utils import dict_to_obj
 from .models import UserModel
 import uuid
 from datetime import datetime
-from common.storage.models import StorageEntryModel
+from common.databases.nosql.models import DatabaseEntryModel
 
 
 class UserHandler(object):
 
-    _storage: Storage
+    _dp_op: DatabaseOperations
 
-    def __init__(self, storage: Storage):
-        self._storage = storage
+    def __init__(self, dp_op: DatabaseOperations):
+        self._dp_op = dp_op
 
     def _create(self, username: str, auth_method: str):
         object_id = str(uuid.uuid5(uuid.NAMESPACE_OID, f'{username}-{datetime.utcnow()}'))
@@ -20,21 +20,21 @@ class UserHandler(object):
             'object_id': object_id,
             'auth_method': auth_method,
         })
-        storage_entry = StorageEntryModel(**{
+        db_entry = DatabaseEntryModel(**{
             'id': username,
             'partition_key': 0,
             'data': user.to_dict(),
             'etag': "*"
         })
-        self._storage.add_or_update(storage_entry)
+        self._dp_op.insert_or_update(db_entry)
 
     def get_or_create(self, username: str, auth_method: str) -> UserModel:
         user = None
-        user = self._storage.get(username, 0)
+        user = self._dp_op.get(username, 0)
         if user is not None:
             return dict_to_obj(UserModel, user.data)
         self._create(username, auth_method)
-        user = self._storage.get(username, 0)
+        user = self._dp_op.get(username, 0)
         if user is None:
             # TODO: raise exception
             pass

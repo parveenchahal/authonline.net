@@ -1,21 +1,21 @@
 from typing import List
 import uuid
-from common.storage import Storage
-from common.storage.models import StorageEntryModel
+from common.databases.nosql import DatabaseOperations
+from common.databases.nosql.models import DatabaseEntryModel
 from common.utils import dict_to_obj
 from .models import SessionRegistrationDetailsModel
 
 class SessionRegistrationHandler(object):
 
-    _storage: Storage
+    _db_op: DatabaseOperations
 
-    def __init__(self, storage: Storage):
-        self._storage = storage
+    def __init__(self, db_op: DatabaseOperations):
+        self._db_op = db_op
 
     def get(self, client_id: str) -> SessionRegistrationDetailsModel:
-        storage_entry = self._storage.get(client_id, 0)
-        if storage_entry is not None:
-            return dict_to_obj(SessionRegistrationDetailsModel, storage_entry.data)
+        db_entry = self._db_op.get(client_id, 0)
+        if db_entry is not None:
+            return dict_to_obj(SessionRegistrationDetailsModel, db_entry.data)
         return None
 
     def _validate_reg_details(self, obj: SessionRegistrationDetailsModel):
@@ -35,6 +35,6 @@ class SessionRegistrationHandler(object):
 
     def update(self, reg_details: SessionRegistrationDetailsModel):
         self._validate_reg_details(reg_details)
-        storage_entry = StorageEntryModel(reg_details.client_id, 0, reg_details.to_dict())
-        self._storage.add_or_update(storage_entry)
+        db_entry = DatabaseEntryModel(reg_details.client_id, 0, reg_details.to_dict())
+        self._db_op.insert_or_update(db_entry)
 

@@ -11,10 +11,10 @@ from common.crypto import CertificateFromKeyvault
 from common.crypto.rsa import RSAPrivateKeyHandler, RSAPublicKeyHandler
 from common.crypto.jwt import JWTHandler
 from common.key_vault import KeyVaultSecret
-from common.storage.cosmos import CosmosClientBuilderFromKeyvaultSecret
-from .session import init_session_validator
-from common.storage.cosmos import create_cosmos_container_handler, \
+from common.databases.nosql.cosmos import CosmosClientBuilderFromKeyvaultSecret
+from common.databases.nosql.cosmos import create_cosmos_container_handler, \
                                 create_database_container_if_not_exists
+from .session import init_session_validator
 from . import config
 from .controllers import LogoutController, GoogleSignInController, \
                         PublicCertificatesController, UserInfoController, \
@@ -59,7 +59,7 @@ signing_certificate_handler = CertificateFromKeyvault(
 #===================================================================================
 
 
-#============================== Create Storage handlers ============================
+#============================== Create Database handlers ============================
 secret = KeyVaultSecret(
     config.common.KeyVaultName,
     config.common.CosmosDbConnectionStrings,
@@ -70,29 +70,29 @@ create_database_container_if_not_exists(
     config.common.DatebaseName,
     ('user_principal', 'session', 'user_principal_info', 'registration_for_session'),
     config.common.CosmosOfferThroughput)
-session_storage_container = create_cosmos_container_handler(
+session_container = create_cosmos_container_handler(
     config.common.DatebaseName,
     'session',
     timedelta(hours=1),
     client_builder)
-user_storage_container = create_cosmos_container_handler(
+user_container = create_cosmos_container_handler(
     config.common.DatebaseName,
     'user_principal',
     timedelta(hours=1),
     client_builder)
-user_info_storage_container = create_cosmos_container_handler(
+user_info_container = create_cosmos_container_handler(
     config.common.DatebaseName,
     'user_principal_info',
     timedelta(hours=1),
     client_builder)
-registration_for_session_storage_container = create_cosmos_container_handler(
+registration_for_session_container = create_cosmos_container_handler(
     config.common.DatebaseName,
     'registration_for_session',
     timedelta(hours=1),
     client_builder)
 
-userinfo_handler = UserInfoHandler(logger, user_info_storage_container)
-user_handler = UserHandler(user_storage_container)
+userinfo_handler = UserInfoHandler(logger, user_info_container)
+user_handler = UserHandler(user_container)
 #===================================================================================
 
 
@@ -106,7 +106,7 @@ jwt_handler = JWTHandler(rsa_private_key_handler, rsa_public_key_handler)
 #============================== Create session handler =============================
 session_handler = SessionHandler(
     logger,
-    session_storage_container,
+    session_container,
     jwt_handler,
     refresh_session_interval=config.common.RefreshSessionAfterInterval)
 #===================================================================================
@@ -114,7 +114,7 @@ session_handler = SessionHandler(
 
 #============================== Create registration handler ========================
 session_registration_handler = SessionRegistrationHandler(
-    registration_for_session_storage_container)
+    registration_for_session_container)
 #===================================================================================
 
 

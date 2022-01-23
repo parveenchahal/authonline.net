@@ -1,6 +1,6 @@
 from flask_restful import request
 from common import Controller
-from common.session.models import Session
+from common.authonline.session.models import Session
 from common.crypto.jwt import JWTHandler
 from common import http_responses
 from common.http_responses.models import MessageResponseModel
@@ -16,7 +16,7 @@ class LogoutController(Controller):
 
     @validate_session
     def get(self):
-        session_token = request.headers['Session']
+        session_token: str = request.headers['Session']
         session = Session(**(JWTHandler.decode_payload(session_token.split('.')[1])))
         self._session_handler.expires(session.oid, session.sid)
         msg = MessageResponseModel(**{

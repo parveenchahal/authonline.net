@@ -2,7 +2,7 @@ from logging import Logger
 import functools
 from flask_restful import request
 from common.crypto.jwt import JWTHandler
-from common.session import SessionValidator
+from common.authonline.session import SessionValidator
 from common import exceptions, http_responses
 
 _session_validator: SessionValidator = None
@@ -24,7 +24,7 @@ def _validate_session(f, ignore_refresh_expiry, *args, **kwargs):
     except KeyError:
         return http_responses.UnauthorizedResponse("Session token not found in request.")
     try:
-        _session_validator.validate(session_token, ignore_refresh_expiry)
+        _session_validator.validate(session_token, ignore_refresh_expiry=ignore_refresh_expiry)
     except exceptions.SessionRequiredRefreshError as ex:
         _logger.exception(ex)
         return http_responses.UnauthorizedResponse("Session required refresh.")

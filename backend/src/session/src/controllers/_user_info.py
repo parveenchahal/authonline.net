@@ -1,5 +1,5 @@
 from flask_restful import request
-from common.session.models import Session
+from common.authonline.session.models import Session
 from common import Controller
 from common.crypto.jwt import JWTHandler
 from common.http_responses import JSONResponse
@@ -16,7 +16,7 @@ class UserInfoController(Controller):
 
     @validate_session
     def get(self):
-        session_token = request.headers['Session']
+        session_token: str = request.headers['Session']
         session = Session(**(JWTHandler.decode_payload(session_token.split('.')[1])))
         user_info = self._userinfo_handler.get(session.oid, session.sid)
         return JSONResponse(user_info)

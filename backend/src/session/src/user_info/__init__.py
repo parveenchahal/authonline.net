@@ -1,30 +1,30 @@
-from common.storage import Storage
+from common.databases.nosql import DatabaseOperations
 from .models import UserInfoModel
 from requests import request as http_request 
 from common.utils import dict_to_obj, parse_json
-from common.storage.models import StorageEntryModel
+from common.databases.nosql.models import DatabaseEntryModel
 from logging import Logger
 
 class UserInfoHandler(object):
 
     _logger: Logger
-    _storage: Storage
+    _db_op: DatabaseOperations
     _google_userinfo_endpoint: str = "https://openidconnect.googleapis.com/v1/userinfo"
 
-    def __init__(self, logger: Logger, storage: Storage):
+    def __init__(self, logger: Logger, db_op: DatabaseOperations):
         self._logger = logger
-        self._storage = storage
+        self._db_op = db_op
 
     def get(self, object_id: str, session_id: str) -> UserInfoModel:
-        storage_entry = self._storage.get(object_id, 0)
-        return dict_to_obj(UserInfoModel, storage_entry.data)
+        db_entry = self._db_op.get(object_id, 0)
+        return dict_to_obj(UserInfoModel, db_entry.data)
 
     def fetch_and_store_from_google(self, object_id: str, access_token: str):
         res = http_request(
             'GET',
             self._google_userinfo_endpoint,
             headers={"Authorization": f'Bearer {access_token}'})
-        info_dict = parse_json(res.text)
+        info_dict: dict = parse_json(res.text)
 
         user_info = UserInfoModel(**{
             'object_id': object_id,
@@ -37,12 +37,12 @@ class UserInfoHandler(object):
             'photo_url': info_dict.get("picture", None)
         })
 
-        storage_entry = StorageEntryModel(**{
+        db_entry = DatabaseEntryModel(**{
             'id': object_id,
             'partition_key': 0,
             'data': user_info.to_dict(),
             'etag': '*'
         })
 
-        self._storage.add_or_update(storage_entry)
+        self._db_op.insert_or_update(db_entry)
         

@@ -1,5 +1,5 @@
 from flask_restful import request
-from common.session.models import Session
+from common.authonline.session.models import Session
 from common.crypto.jwt import JWTHandler
 from common import Controller
 from common import http_responses

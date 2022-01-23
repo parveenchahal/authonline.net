@@ -1,7 +1,7 @@
 from logging import Logger
 from flask_restful import request
 from common import Controller, http_responses, exceptions
-from common.session.models import Session
+from common.authonline.session.models import Session
 from common.crypto.jwt import JWTHandler
 from .. import config
 from ..registration import SessionRegistrationHandler
