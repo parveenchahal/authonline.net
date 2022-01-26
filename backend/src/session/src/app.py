@@ -5,7 +5,7 @@ from flask import Flask
 from flask_restful import Api
 from redis import Redis
 
-from common import AADToken
+from common import AADToken, Scheduler
 from common.cache.redis import RedisCache
 from common.crypto import CertificateFromKeyvault
 from common.crypto.rsa import RSAPrivateKeyHandler, RSAPublicKeyHandler
@@ -54,8 +54,13 @@ secret = KeyVaultSecret(
     key_vault_token)
 signing_certificate_handler = CertificateFromKeyvault(
     secret,
-    RedisCache(redis_client, timedelta(hours=1),
-    namespace="public_certificate"))
+    RedisCache(redis_client, timedelta(days=1),
+    namespace="signing_certificate"))
+
+# Automatically retrieve cert after cache expiry
+signing_certificate_scheduler = Scheduler(signing_certificate_handler.get, timedelta(hours=1), 'signing_certificate_scheduler')
+signing_certificate_scheduler.start()
+
 #===================================================================================
 
 
